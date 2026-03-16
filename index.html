@@ -44,68 +44,52 @@
 
     if (!input.trim()) return alert("Введи запрос!");
 
-    const API_KEY = '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';
+    // ТВОЙ НОВЫЙ ТОКЕН ОТ HUGGING FACE
+    const HF_TOKEN = "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";
     
-    // Список моделей для перебора (если одна занята, пробуем другую)
-    const models = [
-        "deepseek/deepseek-chat:free",
-        "qwen/qwen-2-7b-instruct:free",
-        "google/gemma-2-9b-it:free"
-    ];
+    // Используем модель Mistral (она стабильная и бесплатная)
+    const MODEL_ID = "mistralai/Mistral-7B-Instruct-v0.2";
 
+    btn.innerText = "Hugging Face думает...";
     btn.disabled = true;
-    resultDiv.style.display = 'none';
 
-    for (let model of models) {
-        btn.innerText = `Пробую ${model.split('/')[1]}...`;
-        
-        try {
-            const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-                method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${API_KEY}`,
-                    "Content-Type": "application/json",
-                    "HTTP-Referer": "https://github.com/andrew", 
-                    "X-Title": "Prompt Money Maker"
-                },
-                body: JSON.stringify({
-                    "model": model,
-                    "messages": [
-                        {"role": "system", "content": "You are a prompt engineer. Transform the user idea into a detailed English Midjourney prompt. ONLY the prompt text."},
-                        {"role": "user", "content": input}
-                    ]
-                })
-            });
+    try {
+        const response = await fetch(`https://api-inference.huggingface.co/models/${MODEL_ID}`, {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${HF_TOKEN}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                inputs: `<s>[INST] You are a professional prompt engineer. Expand this idea into a detailed English Midjourney prompt: "${input}". Output ONLY the final prompt text without any intro. [/INST]`,
+                parameters: { max_new_tokens: 250 }
+            })
+        });
 
-            const data = await response.json();
+        const data = await response.json();
 
-            if (data.choices && data.choices[0].message) {
-                promptText.innerText = data.choices[0].message.content.trim();
-                resultDiv.style.display = 'block';
-                btn.innerText = "Улучшить и заработать";
-                btn.disabled = false;
-                return; // Выходим из цикла, если всё ок
-            } else if (data.error) {
-                console.log(`Ошибка модели ${model}:`, data.error.message);
-                // Продолжаем цикл к следующей модели
+        // У Hugging Face ответ приходит либо массивом, либо объектом с ошибкой
+        if (data[0] && data[0].generated_text) {
+            let result = data[0].generated_text;
+            // Убираем из ответа саму инструкцию, если она там осталась
+            result = result.split('[/INST]').pop().trim();
+            
+            promptText.innerText = result;
+            resultDiv.style.display = 'block';
+        } else if (data.error) {
+            if (data.error.includes("loading")) {
+                alert("Модель просыпается... Подожди 10 секунд и нажми еще раз (она загружается на сервер).");
+            } else {
+                alert("Ошибка: " + data.error);
             }
-        } catch (e) {
-            console.log(`Сбой сети для ${model}`);
         }
+    } catch (error) {
+        alert("Ошибка сети. Проверь VPN, если ты в РФ!");
+    } finally {
+        btn.innerText = "Улучшить и заработать";
+        btn.disabled = false;
     }
-
-    // Если дошли сюда, значит ни одна модель не ответила
-    alert("Все бесплатные модели сейчас перегружены. Это 'беда' всех бесплатных API. Попробуй через 5-10 минут или выложи на GitHub (иногда это помогает).");
-    btn.innerText = "Улучшить и заработать";
-    btn.disabled = false;
 }
-
-        function copyText() {
-            const text = document.getElementById('promptText').innerText;
-            navigator.clipboard.writeText(text).then(() => {
-                alert("Скопировано!");
-            });
-        }
     </script>
 </body>
 </html>
