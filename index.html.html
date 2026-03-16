@@ -1,0 +1,111 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Prompt Pro — Money Edition</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #0f0f0f; color: #e0e0e0; display: flex; justify-content: center; padding: 20px; margin: 0; }
+        .container { width: 100%; max-width: 600px; text-align: center; background: #181818; padding: 30px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.7); border: 1px solid #333; }
+        h1 { color: #00d2ff; margin-bottom: 5px; }
+        .subtitle { color: #666; font-size: 14px; margin-bottom: 25px; }
+        textarea { width: 100%; height: 120px; padding: 15px; border-radius: 12px; border: 1px solid #444; background: #222; color: #fff; font-size: 16px; margin-bottom: 20px; box-sizing: border-box; outline: none; transition: 0.3s; }
+        textarea:focus { border-color: #00d2ff; }
+        button { background: linear-gradient(45deg, #007bff, #00d2ff); color: white; border: none; padding: 15px 40px; border-radius: 10px; cursor: pointer; font-size: 18px; font-weight: bold; width: 100%; transition: 0.3s; }
+        button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,210,255,0.4); }
+        button:disabled { background: #444; cursor: not-allowed; transform: none; box-shadow: none; }
+        #result { margin-top: 30px; padding: 20px; background: #252525; border-radius: 12px; display: none; text-align: left; border: 1px dashed #555; }
+        #promptText { color: #00ffcc; font-family: 'Courier New', monospace; white-space: pre-wrap; word-wrap: break-word; }
+        .copy-btn { margin-top: 15px; display: inline-block; background: #333; color: #00d2ff; padding: 8px 15px; border-radius: 6px; cursor: pointer; border: 1px solid #00d2ff; font-size: 13px; }
+        .copy-btn:hover { background: #00d2ff; color: #000; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Prompt Money-Maker</h1>
+        <div class="subtitle">Работает на DeepSeek V3 (через OpenRouter)</div>
+        
+        <textarea id="userInput" placeholder="Напиши что угодно: ковбой на динозавре, киберпанк бабушка..."></textarea>
+        <button id="mainBtn" onclick="optimizePrompt()">Улучшить и заработать</button>
+        
+        <div id="result">
+            <strong>💎 Готовый промпт для Midjourney:</strong>
+            <p id="promptText"></p>
+            <div class="copy-btn" onclick="copyText()">Копировать результат</div>
+        </div>
+    </div>
+
+    <script>
+       async function optimizePrompt() {
+    const input = document.getElementById('userInput').value;
+    const resultDiv = document.getElementById('result');
+    const promptText = document.getElementById('promptText');
+    const btn = document.getElementById('mainBtn');
+
+    if (!input.trim()) return alert("Введи запрос!");
+
+    const API_KEY = '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';
+    
+    // Список моделей для перебора (если одна занята, пробуем другую)
+    const models = [
+        "deepseek/deepseek-chat:free",
+        "qwen/qwen-2-7b-instruct:free",
+        "google/gemma-2-9b-it:free"
+    ];
+
+    btn.disabled = true;
+    resultDiv.style.display = 'none';
+
+    for (let model of models) {
+        btn.innerText = `Пробую ${model.split('/')[1]}...`;
+        
+        try {
+            const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${API_KEY}`,
+                    "Content-Type": "application/json",
+                    "HTTP-Referer": "https://github.com/andrew", 
+                    "X-Title": "Prompt Money Maker"
+                },
+                body: JSON.stringify({
+                    "model": model,
+                    "messages": [
+                        {"role": "system", "content": "You are a prompt engineer. Transform the user idea into a detailed English Midjourney prompt. ONLY the prompt text."},
+                        {"role": "user", "content": input}
+                    ]
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.choices && data.choices[0].message) {
+                promptText.innerText = data.choices[0].message.content.trim();
+                resultDiv.style.display = 'block';
+                btn.innerText = "Улучшить и заработать";
+                btn.disabled = false;
+                return; // Выходим из цикла, если всё ок
+            } else if (data.error) {
+                console.log(`Ошибка модели ${model}:`, data.error.message);
+                // Продолжаем цикл к следующей модели
+            }
+        } catch (e) {
+            console.log(`Сбой сети для ${model}`);
+        }
+    }
+
+    // Если дошли сюда, значит ни одна модель не ответила
+    alert("Все бесплатные модели сейчас перегружены. Это 'беда' всех бесплатных API. Попробуй через 5-10 минут или выложи на GitHub (иногда это помогает).");
+    btn.innerText = "Улучшить и заработать";
+    btn.disabled = false;
+}
+
+        function copyText() {
+            const text = document.getElementById('promptText').innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Скопировано!");
+            });
+        }
+    </script>
+</body>
+</html>
