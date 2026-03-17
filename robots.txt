@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Sitemap: https://dyshadyshez.github.io/Promt-Changer/sitemap.xml
+Host: https://dyshadyshez.github.io
