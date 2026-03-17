@@ -2,54 +2,75 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <meta name="theme-color" content="#1a1f2e" media="(prefers-color-scheme: dark)">
-    <meta name="theme-color" content="#eef2ff" media="(prefers-color-scheme: light)">
-    <title>Промт-мастер | 3D параллакс + теги</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Промт-мастер | Детальная генерация</title>
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript" >
+        (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+        (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+        ym(107773413, "init", {
+            clickmap:true,
+            trackLinks:true,
+            accurateTrackBounce:true
+        });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/107773413" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
     <style>
-        /* ===== ПЕРЕМЕННЫЕ И ТЁМНАЯ ТЕМА ПО УМОЛЧАНИЮ ===== */
-        :root {
-            --bg-gradient-start: #1a1f2e;
-            --bg-gradient-end: #0b0d17;
-            --text-primary: #eef2ff;
-            --text-secondary: #9aa4c8;
-            --panel-bg: rgba(20, 25, 40, 0.7);
-            --panel-border: rgba(255, 255, 255, 0.1);
-            --input-bg: rgba(12, 16, 28, 0.7);
-            --input-border: #2f3750;
-            --accent: #4f6af5;
-            --accent-glow: #2e3aa3;
-            --chip-bg: rgba(79, 106, 245, 0.15);
-            --chip-border: #3c4870;
-            --chip-hover: #4f6af5;
-            --result-bg: rgba(8, 12, 22, 0.6);
-        }
-
-        /* Светлая тема (если система предпочитает светлую) */
-        @media (prefers-color-scheme: light) {
-            :root {
-                --bg-gradient-start: #e0e5f0;
-                --bg-gradient-end: #c0c8da;
-                --text-primary: #1a1f2e;
-                --text-secondary: #3f4a6b;
-                --panel-bg: rgba(255, 255, 255, 0.8);
-                --panel-border: rgba(0, 0, 0, 0.1);
-                --input-bg: rgba(240, 245, 255, 0.9);
-                --input-border: #b0b8d0;
-                --accent: #4f6af5;
-                --accent-glow: #6d85f9;
-                --chip-bg: rgba(79, 106, 245, 0.1);
-                --chip-border: #b0b8d0;
-                --chip-hover: #4f6af5;
-                --result-bg: rgba(230, 235, 250, 0.7);
-            }
-        }
-
+        /* ===== СБРОС И ПЕРЕМЕННЫЕ ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        /* Светлая тема (по умолчанию) */
+        :root {
+            --bg-gradient-start: #f0f4ff;
+            --bg-gradient-end: #d9e2f0;
+            --panel-bg: rgba(255, 255, 255, 0.7);
+            --panel-border: rgba(0, 0, 0, 0.1);
+            --text-primary: #1a1f2e;
+            --text-secondary: #2d3748;
+            --text-muted: #4a5568;
+            --accent: #4f6af5;
+            --accent-hover: #6d85f9;
+            --input-bg: rgba(255, 255, 255, 0.9);
+            --input-border: #cbd5e0;
+            --result-bg: rgba(247, 250, 252, 0.8);
+            --shape-opacity: 0.15;
+            --shape-color1: rgba(0, 100, 255, 0.2);
+            --shape-color2: rgba(150, 50, 255, 0.15);
+            --shape-color3: rgba(255, 100, 150, 0.12);
+            --shape-color4: rgba(50, 200, 100, 0.1);
+            --shape-color5: rgba(255, 180, 50, 0.1);
+        }
+
+        /* Тёмная тема */
+        [data-theme="dark"] {
+            --bg-gradient-start: #1a1f2e;
+            --bg-gradient-end: #0b0d17;
+            --panel-bg: rgba(20, 25, 40, 0.7);
+            --panel-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #eef2ff;
+            --text-secondary: #cbd5ff;
+            --text-muted: #9aa4c8;
+            --accent: #4f6af5;
+            --accent-hover: #6d85f9;
+            --input-bg: rgba(12, 16, 28, 0.7);
+            --input-border: #2f3750;
+            --result-bg: rgba(8, 12, 22, 0.6);
+            --shape-opacity: 0.03;
+            --shape-color1: rgba(0, 180, 255, 0.15);
+            --shape-color2: rgba(180, 90, 255, 0.1);
+            --shape-color3: rgba(255, 120, 150, 0.12);
+            --shape-color4: rgba(100, 255, 150, 0.08);
+            --shape-color5: rgba(255, 200, 100, 0.1);
         }
 
         body {
@@ -65,6 +86,7 @@
             transition: background 0.3s, color 0.3s;
         }
 
+        /* ===== 3D ЛЕВИТИРУЮЩИЕ ФИГУРЫ ===== */
         .shapes {
             position: fixed;
             top: 0;
@@ -77,18 +99,56 @@
 
         .shape {
             position: absolute;
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, var(--shape-opacity));
             border-radius: 50%;
             filter: blur(40px);
             will-change: transform;
+            transition: background 0.3s;
         }
 
-        .shape1 { width: 300px; height: 300px; background: rgba(0, 180, 255, 0.15); top: 5%; left: -5%; }
-        .shape2 { width: 500px; height: 500px; background: rgba(180, 90, 255, 0.1); bottom: -10%; right: -5%; border-radius: 60% 40% 50% 50%; }
-        .shape3 { width: 250px; height: 250px; background: rgba(255, 120, 150, 0.12); top: 40%; right: 15%; border-radius: 30% 70% 70% 30%; filter: blur(50px); }
-        .shape4 { width: 400px; height: 400px; background: rgba(100, 255, 150, 0.08); bottom: 20%; left: 10%; border-radius: 40% 60% 30% 70%; }
-        .shape5 { width: 200px; height: 200px; background: rgba(255, 200, 100, 0.1); top: 15%; right: 25%; border-radius: 50% 20% 50% 20%; filter: blur(30px); }
+        .shape1 {
+            width: 300px;
+            height: 300px;
+            background: var(--shape-color1);
+            top: 5%;
+            left: -5%;
+        }
+        .shape2 {
+            width: 500px;
+            height: 500px;
+            background: var(--shape-color2);
+            bottom: -10%;
+            right: -5%;
+            border-radius: 60% 40% 50% 50%;
+        }
+        .shape3 {
+            width: 250px;
+            height: 250px;
+            background: var(--shape-color3);
+            top: 40%;
+            right: 15%;
+            border-radius: 30% 70% 70% 30%;
+            filter: blur(50px);
+        }
+        .shape4 {
+            width: 400px;
+            height: 400px;
+            background: var(--shape-color4);
+            bottom: 20%;
+            left: 10%;
+            border-radius: 40% 60% 30% 70%;
+        }
+        .shape5 {
+            width: 200px;
+            height: 200px;
+            background: var(--shape-color5);
+            top: 15%;
+            right: 25%;
+            border-radius: 50% 20% 50% 20%;
+            filter: blur(30px);
+        }
 
+        /* ===== ОСНОВНОЙ КОНТЕЙНЕР ===== */
         .main-panel {
             position: relative;
             z-index: 10;
@@ -100,23 +160,51 @@
             border: 1px solid var(--panel-border);
             border-radius: 32px;
             padding: 2.5rem 2rem;
-            box-shadow: 0 30px 50px -20px rgba(0, 0, 0, 0.8), inset 0 1px 2px rgba(255,255,255,0.06);
-            transition: background 0.3s, border-color 0.3s;
+            box-shadow: 0 30px 50px -20px rgba(0, 0, 0, 0.5);
+            transition: background 0.3s, border 0.3s;
+        }
+
+        /* Шапка с переключателем темы */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         h1 {
             font-size: 2.5rem;
             font-weight: 500;
             letter-spacing: -0.02em;
-            background: linear-gradient(to right, #fff, #b0c0ff);
+            background: linear-gradient(to right, var(--accent), #b0c0ff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0;
+        }
+
+        .theme-toggle {
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 40px;
+            padding: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            transition: 0.2s;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--accent);
+            transform: scale(1.02);
         }
 
         .subhead {
             font-size: 1rem;
-            color: var(--text-secondary);
+            color: var(--text-muted);
             margin-bottom: 2rem;
             border-left: 3px solid var(--accent);
             padding-left: 1rem;
@@ -169,8 +257,9 @@
             flex: 1 1 200px;
         }
 
+        /* Дополнительные настройки */
         .extra-settings {
-            background: rgba(0, 0, 0, 0.2);
+            background: var(--result-bg);
             border-radius: 24px;
             padding: 1.5rem;
             margin-bottom: 1.8rem;
@@ -178,6 +267,7 @@
             display: flex;
             flex-wrap: wrap;
             gap: 1.5rem;
+            transition: background 0.3s;
         }
 
         .setting-item {
@@ -193,18 +283,52 @@
         .range-value {
             display: inline-block;
             margin-left: 0.5rem;
-            color: var(--text-secondary);
+            color: var(--accent);
             font-weight: 600;
         }
 
+        /* Теги (чекбоксы) */
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .tag-checkbox {
+            display: inline-flex;
+            align-items: center;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 30px;
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: 0.2s;
+            user-select: none;
+        }
+
+        .tag-checkbox input {
+            display: none;
+        }
+
+        .tag-checkbox:has(input:checked) {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        /* Соотношение сторон */
         .aspect-ratio-group {
             display: flex;
             gap: 0.5rem;
             flex-wrap: wrap;
+            align-items: stretch;
         }
 
         .aspect-btn {
-            background: rgba(255,255,255,0.05);
+            background: var(--input-bg);
             border: 1px solid var(--input-border);
             border-radius: 30px;
             padding: 0.5rem 0;
@@ -213,14 +337,15 @@
             cursor: pointer;
             transition: 0.2s;
             text-align: center;
-            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* Пропорциональная ширина кнопок */
-        .aspect-btn[data-ratio="16:9"] { min-width: 80px; }
-        .aspect-btn[data-ratio="1:1"] { min-width: 60px; }
-        .aspect-btn[data-ratio="9:16"] { min-width: 50px; }
-        .aspect-btn[data-ratio="21:9"] { min-width: 100px; }
+        .aspect-btn[data-ratio="16:9"] { width: 100px; }
+        .aspect-btn[data-ratio="1:1"] { width: 70px; }
+        .aspect-btn[data-ratio="9:16"] { width: 70px; }
+        .aspect-btn[data-ratio="21:9"] { width: 120px; }
 
         .aspect-btn.active {
             background: var(--accent);
@@ -228,39 +353,7 @@
             color: white;
         }
 
-        /* Блок чипсов (теги) */
-        .tags-section {
-            margin-bottom: 1.8rem;
-        }
-        .tags-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.6rem;
-            margin-top: 0.5rem;
-        }
-        .tag-chip {
-            background: var(--chip-bg);
-            border: 1px solid var(--chip-border);
-            border-radius: 40px;
-            padding: 0.4rem 1.2rem;
-            font-size: 0.85rem;
-            color: var(--text-primary);
-            cursor: pointer;
-            transition: 0.2s;
-            user-select: none;
-        }
-        .tag-chip.active {
-            background: var(--chip-hover);
-            border-color: var(--chip-hover);
-            color: white;
-        }
-        .tag-chip:hover {
-            background: var(--chip-hover);
-            border-color: var(--chip-hover);
-            color: white;
-            transform: translateY(-2px);
-        }
-
+        /* Кнопки */
         .button-group {
             display: flex;
             gap: 1rem;
@@ -278,28 +371,25 @@
             cursor: pointer;
             color: white;
             transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
-            box-shadow: 0 15px 25px -10px var(--accent-glow);
+            box-shadow: 0 15px 25px -10px rgba(47, 58, 163, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.15);
             flex: 2;
         }
 
         .lang-toggle-btn {
             flex: 1;
-            background: linear-gradient(145deg, #5f5f7a, #45455b);
-            box-shadow: 0 10px 20px -8px #2d2d3a;
+            background: var(--input-bg);
+            color: var(--text-primary);
+            box-shadow: 0 10px 20px -8px rgba(0,0,0,0.2);
+            border: 1px solid var(--input-border);
         }
 
         .primary-btn:hover, .lang-toggle-btn:hover {
             transform: scale(1.02) translateY(-2px);
-            box-shadow: 0 20px 30px -8px var(--accent-glow);
             filter: brightness(1.1);
         }
 
-        .primary-btn:active, .lang-toggle-btn:active {
-            transform: scale(0.98) translateY(2px);
-            box-shadow: 0 5px 15px -5px #1f29a0;
-        }
-
+        /* Результат */
         .result-area {
             background: var(--result-bg);
             border-radius: 24px;
@@ -327,7 +417,7 @@
         }
 
         .copy-btn {
-            background: rgba(255, 255, 255, 0.05);
+            background: var(--input-bg);
             border: 1px solid var(--input-border);
             border-radius: 30px;
             padding: 0.5rem 1.2rem;
@@ -341,9 +431,9 @@
         }
 
         .copy-btn:hover {
-            background: rgba(255, 255, 255, 0.12);
+            background: var(--accent);
             border-color: var(--accent);
-            color: var(--text-primary);
+            color: white;
             transform: scale(1.02);
         }
 
@@ -354,10 +444,10 @@
             white-space: pre-wrap;
             word-break: break-word;
             min-height: 120px;
-            padding: 0.5rem 0;
-            background: rgba(0,0,0,0.2);
-            border-radius: 16px;
             padding: 1rem;
+            background: var(--input-bg);
+            border-radius: 16px;
+            border: 1px solid var(--input-border);
         }
 
         .examples {
@@ -369,26 +459,38 @@
         }
 
         .examples span {
-            color: var(--text-secondary);
+            color: var(--text-muted);
             font-size: 0.9rem;
         }
 
         .example-chip {
-            background: var(--chip-bg);
-            border: 1px solid var(--chip-border);
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
             border-radius: 40px;
             padding: 0.3rem 1rem;
             font-size: 0.85rem;
-            color: var(--text-primary);
+            color: var(--text-secondary);
             cursor: pointer;
             transition: 0.2s;
         }
 
         .example-chip:hover {
-            background: var(--chip-hover);
-            border-color: var(--chip-hover);
+            background: var(--accent);
+            border-color: var(--accent);
             color: white;
             transform: translateY(-2px);
+        }
+
+        .footer {
+            margin-top: 2rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .footer a {
+            color: var(--accent);
+            text-decoration: none;
         }
 
         @media (max-width: 700px) {
@@ -396,28 +498,11 @@
             h1 { font-size: 2rem; }
             .extra-settings { flex-direction: column; gap: 1rem; }
             .button-group { flex-direction: column; }
+            .aspect-btn[data-ratio] { width: auto !important; flex: 1; }
         }
     </style>
-    <!-- Yandex.Metrika counter -->
-<script type="text/javascript" >
-   (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-   m[i].l=1*new Date();
-   for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-   k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-   (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
-
-   ym(НОМЕР_СЧЁТЧИКА, "init", {
-        clickmap:true,
-        trackLinks:true,
-        accurateTrackBounce:true,
-        webvisor:true
-   });
-</script>
-<noscript><div><img src="https://mc.yandex.ru/watch/107773413" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-<!-- /Yandex.Metrika counter -->
 </head>
 <body>
-
     <div class="shapes" id="parallaxShapes">
         <div class="shape shape1" data-depth="0.4"></div>
         <div class="shape shape2" data-depth="0.7"></div>
@@ -427,7 +512,13 @@
     </div>
 
     <div class="main-panel">
-        <h1>✨ Промт-мастер</h1>
+        <div class="header">
+            <h1>✨ Промт-мастер</h1>
+            <div class="theme-toggle" id="themeToggle">
+                <span>🌙</span>
+                <span>Тема</span>
+            </div>
+        </div>
         <div class="subhead">Мощные, детальные промты с учётом всех параметров</div>
 
         <div class="input-group">
@@ -456,19 +547,26 @@
             </div>
         </div>
 
-        <!-- Дополнительные настройки (общие) -->
+        <!-- Дополнительные настройки -->
         <div class="extra-settings">
             <div class="setting-item">
-                <label for="context">Контекст / доп. детали <span style="opacity:0.7;">(необязательно)</span></label>
+                <label for="context">Контекст / доп. детали</label>
                 <textarea id="context" placeholder="Любые уточнения, которые нужно учесть..." rows="2"></textarea>
             </div>
             <div class="setting-item">
                 <label for="detailLevel">Уровень детализации: <span id="detailValue" class="range-value">3</span></label>
                 <input type="range" id="detailLevel" min="1" max="5" value="3" step="1">
             </div>
+            
+            <!-- Теги (специальные инструкции) -->
+            <div class="setting-item" id="tagsContainer" style="display: none;">
+                <label>Дополнительные теги</label>
+                <div class="tags-container" id="dynamicTags"></div>
+            </div>
+
             <div class="setting-item" id="aspectRatioContainer" style="display: none;">
                 <label>Соотношение сторон</label>
-                <div class="aspect-ratio-group">
+                <div class="aspect-ratio-group" id="aspectGroup">
                     <div class="aspect-btn" data-ratio="16:9">16:9</div>
                     <div class="aspect-btn active" data-ratio="1:1">1:1</div>
                     <div class="aspect-btn" data-ratio="9:16">9:16</div>
@@ -478,15 +576,9 @@
             </div>
         </div>
 
-        <!-- Блок тегов (специфических для направления) -->
-        <div class="tags-section" id="tagsSection" style="display: none;">
-            <label>Дополнительные опции (теги)</label>
-            <div class="tags-container" id="tagsContainer"></div>
-        </div>
-
         <div class="button-group">
             <button class="primary-btn" id="enhanceBtn">✨ Улучшить промт</button>
-            <button class="lang-toggle-btn" id="langToggle">🇷🇺 Русский / 🇬🇧 English</button>
+            <button class="lang-toggle-btn" id="langToggle">🇷🇺 / 🇬🇧</button>
         </div>
 
         <div class="result-area">
@@ -506,6 +598,10 @@
             <div class="example-chip" data-example="формула для подсчёта часов">📅 формула для подсчёта часов</div>
             <div class="example-chip" data-example="логотип для кофейни в стиле минимализм">☕ логотип кофейни</div>
         </div>
+
+        <div class="footer">
+            <a href="https://github.com/dyshadyshez/Promt-Changer" target="_blank">GitHub</a> • Промт-мастер v2.0
+        </div>
     </div>
 
     <script>
@@ -523,20 +619,34 @@
                 marketing: ['убедительный', 'информационный', 'вирусный', 'сторителлинг', 'SEO-оптимизированный', 'лаконичный', 'эмоциональный']
             };
 
-            const visualDirections = ['image', 'video', '3d', 'design']; // для соотношения сторон
-
-            // Специфические теги для каждого направления
+            // Теги для разных направлений
             const tagsMap = {
-                code: ['Один HTML+CSS+JS файл', 'React + TypeScript', 'Node.js backend', 'Python script', 'SQL запрос', 'Документация'],
-                excel: ['С графиками', 'Сводная таблица', 'Макрос VBA', 'Формулы массива', 'Дашборд', 'Условное форматирование'],
-                marketing: ['Пост для Instagram', 'Email рассылка', 'Рекламный слоган', 'Статья для блога', 'PR-релиз', 'Тизер'],
-                text: ['Статья', 'Пост', 'Письмо', 'Сценарий', 'Описание товара', 'Интервью'],
-                music: ['Инструментал', 'Вокал', 'Эмбиент', 'Ремикс', 'Саундтрек', 'Бит'],
-                video: ['Короткий метр', 'Полный метр', 'Ролик для TikTok', 'Обучающее видео', 'Обзор', 'Влог'],
-                image: ['Портрет', 'Пейзаж', 'Арт', 'Фотография', 'Иллюстрация', 'Плакат'],
-                '3d': ['Персонаж', 'Локация', 'Риггинг', 'Анимация', 'Визуализация', 'Скульптинг'],
-                design: ['Логотип', 'Мокап', 'UI/UX', 'Баннер', 'Фирменный стиль', 'Презентация']
+                code: [
+                    { id: 'html_css_js', text: 'Один HTML+CSS+JS файл', ru: 'весь код в одном HTML файле', en: 'all code in one HTML file' },
+                    { id: 'responsive', text: 'Адаптивность', ru: 'адаптивный дизайн для всех устройств', en: 'responsive design for all devices' },
+                    { id: 'comments', text: 'Комментарии', ru: 'подробные комментарии в коде', en: 'detailed comments in code' },
+                    { id: 'modern', text: 'Современный синтаксис', ru: 'использовать современный синтаксис ES6+', en: 'use modern ES6+ syntax' }
+                ],
+                excel: [
+                    { id: 'formula', text: 'Формула', ru: 'создай формулу Excel', en: 'create Excel formula' },
+                    { id: 'macro', text: 'Макрос VBA', ru: 'напиши макрос VBA', en: 'write VBA macro' },
+                    { id: 'pivot', text: 'Сводная таблица', ru: 'создай сводную таблицу', en: 'create pivot table' },
+                    { id: 'chart', text: 'Диаграмма', ru: 'построй диаграмму', en: 'build chart' }
+                ],
+                marketing: [
+                    { id: 'seo', text: 'SEO', ru: 'оптимизировать для поисковиков', en: 'optimize for search engines' },
+                    { id: 'slogan', text: 'Слоган', ru: 'придумай запоминающийся слоган', en: 'create a catchy slogan' },
+                    { id: 'target', text: 'Целевая аудитория', ru: 'опиши целевую аудиторию', en: 'describe target audience' },
+                    { id: 'cta', text: 'CTA', ru: 'добавь призыв к действию', en: 'add call to action' }
+                ],
+                image: [
+                    { id: '8k', text: '8K', ru: 'разрешение 8K', en: '8K resolution' },
+                    { id: 'photorealistic', text: 'Фотореализм', ru: 'фотореалистичное качество', en: 'photorealistic quality' },
+                    { id: 'composition', text: 'Композиция', ru: 'продуманная композиция', en: 'thoughtful composition' }
+                ]
             };
+
+            const visualDirections = ['image', 'video', '3d', 'design'];
 
             // ========== 2. ЭЛЕМЕНТЫ ==========
             const directionSelect = document.getElementById('direction');
@@ -545,6 +655,8 @@
             const contextField = document.getElementById('context');
             const detailSlider = document.getElementById('detailLevel');
             const detailSpan = document.getElementById('detailValue');
+            const tagsContainer = document.getElementById('tagsContainer');
+            const dynamicTags = document.getElementById('dynamicTags');
             const aspectContainer = document.getElementById('aspectRatioContainer');
             const aspectBtns = document.querySelectorAll('.aspect-btn');
             const aspectHidden = document.getElementById('aspectRatio');
@@ -552,13 +664,34 @@
             const enhanceBtn = document.getElementById('enhanceBtn');
             const langToggle = document.getElementById('langToggle');
             const copyBtn = document.getElementById('copyBtn');
-            const tagsSection = document.getElementById('tagsSection');
-            const tagsContainer = document.getElementById('tagsContainer');
+            const themeToggle = document.getElementById('themeToggle');
 
-            let currentLang = 'ru'; 
-            let activeTags = []; // массив выбранных тегов
+            // Состояние
+            let currentLang = 'ru';
+            let selectedTags = [];
 
-            // ========== 3. ОБНОВЛЕНИЕ СТИЛЕЙ ==========
+            // ========== 3. ТЕМА ==========
+            function setTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
+                themeToggle.innerHTML = theme === 'dark' ? '<span>☀️</span><span>Светлая</span>' : '<span>🌙</span><span>Тёмная</span>';
+            }
+
+            // Инициализация темы
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                setTheme(savedTheme);
+            } else {
+                const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                setTheme(systemPrefersDark ? 'dark' : 'light');
+            }
+
+            themeToggle.addEventListener('click', () => {
+                const current = document.documentElement.getAttribute('data-theme');
+                setTheme(current === 'dark' ? 'light' : 'dark');
+            });
+
+            // ========== 4. ОБНОВЛЕНИЕ СТИЛЕЙ И ТЕГОВ ==========
             function updateStyles() {
                 const dir = directionSelect.value;
                 const styles = styleMap[dir] || styleMap['image'];
@@ -570,49 +703,44 @@
                     styleSelect.appendChild(option);
                 });
 
-                // Показываем/скрываем соотношение сторон
-                if (visualDirections.includes(dir)) {
+                // Обновление тегов
+                if (tagsMap[dir]) {
+                    tagsContainer.style.display = 'block';
+                    dynamicTags.innerHTML = '';
+                    selectedTags = [];
+                    tagsMap[dir].forEach(tag => {
+                        const label = document.createElement('label');
+                        label.className = 'tag-checkbox';
+                        const input = document.createElement('input');
+                        input.type = 'checkbox';
+                        input.value = tag.id;
+                        input.addEventListener('change', (e) => {
+                            if (e.target.checked) {
+                                selectedTags.push(tag);
+                            } else {
+                                selectedTags = selectedTags.filter(t => t.id !== tag.id);
+                            }
+                        });
+                        label.appendChild(input);
+                        label.appendChild(document.createTextNode(tag.text));
+                        dynamicTags.appendChild(label);
+                    });
+                } else {
+                    tagsContainer.style.display = 'none';
+                    selectedTags = [];
+                }
+
+                // Соотношение сторон
+                if (dir === 'image' || dir === 'video' || dir === '3d' || dir === 'design') {
                     aspectContainer.style.display = 'block';
                 } else {
                     aspectContainer.style.display = 'none';
                 }
-
-                // Обновляем теги
-                updateTags(dir);
             }
-
-            // ========== 4. ТЕГИ ==========
-            function updateTags(direction) {
-                const tags = tagsMap[direction] || [];
-                if (tags.length > 0) {
-                    tagsSection.style.display = 'block';
-                    tagsContainer.innerHTML = '';
-                    tags.forEach(tag => {
-                        const chip = document.createElement('span');
-                        chip.className = 'tag-chip';
-                        chip.textContent = tag;
-                        chip.dataset.tag = tag;
-                        chip.addEventListener('click', () => {
-                            chip.classList.toggle('active');
-                            // Обновляем массив активных тегов
-                            activeTags = Array.from(document.querySelectorAll('.tag-chip.active')).map(c => c.dataset.tag);
-                        });
-                        tagsContainer.appendChild(chip);
-                    });
-                } else {
-                    tagsSection.style.display = 'none';
-                    activeTags = [];
-                }
-            }
-
+            updateStyles();
             directionSelect.addEventListener('change', updateStyles);
 
-            // ========== 5. СЛАЙДЕР ДЕТАЛИЗАЦИИ ==========
-            detailSlider.addEventListener('input', () => {
-                detailSpan.textContent = detailSlider.value;
-            });
-
-            // ========== 6. КНОПКИ СООТНОШЕНИЯ СТОРОН ==========
+            // ========== 5. СООТНОШЕНИЕ СТОРОН ==========
             aspectBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
                     aspectBtns.forEach(b => b.classList.remove('active'));
@@ -621,126 +749,96 @@
                 });
             });
 
-            // ========== 7. ФУНКЦИЯ ГЕНЕРАЦИИ ПРОМТА ==========
+            // ========== 6. СЛАЙДЕР ==========
+            detailSlider.addEventListener('input', () => {
+                detailSpan.textContent = detailSlider.value;
+            });
+
+            // ========== 7. ФУНКЦИЯ ГЕНЕРАЦИИ ==========
             function generatePrompt(lang) {
-                let idea = rawPrompt.value.trim();
-                if (idea === '') idea = 'придумай что-то интересное';
+                let idea = rawPrompt.value.trim() || 'придумай что-то интересное';
                 const direction = directionSelect.value;
                 const style = styleSelect.value;
                 const context = contextField.value.trim();
                 const detailLevel = parseInt(detailSlider.value);
                 const aspect = aspectHidden.value;
-                const tags = activeTags; // массив строк
 
-                // Инструкция по детализации
                 let detailInstruction = '';
                 if (lang === 'ru') {
-                    if (detailLevel === 1) detailInstruction = 'Минимальная детализация, только основные элементы.';
-                    else if (detailLevel === 2) detailInstruction = 'Средняя детализация, добавь несколько уточнений.';
-                    else if (detailLevel === 3) detailInstruction = 'Детализация выше среднего, опиши ключевые аспекты подробно.';
-                    else if (detailLevel === 4) detailInstruction = 'Высокая детализация, включи много конкретных деталей.';
-                    else if (detailLevel === 5) detailInstruction = 'Максимальная детализация, опиши мельчайшие нюансы, текстуры, освещение, атмосферу.';
+                    const levels = {
+                        1: 'Минимальная детализация, только основные элементы.',
+                        2: 'Средняя детализация, добавь несколько уточнений.',
+                        3: 'Детализация выше среднего, опиши ключевые аспекты подробно.',
+                        4: 'Высокая детализация, включи много конкретных деталей.',
+                        5: 'Максимальная детализация, опиши мельчайшие нюансы, текстуры, освещение, атмосферу.'
+                    };
+                    detailInstruction = levels[detailLevel];
                 } else {
-                    if (detailLevel === 1) detailInstruction = 'Minimal detail, only main elements.';
-                    else if (detailLevel === 2) detailInstruction = 'Medium detail, add a few clarifications.';
-                    else if (detailLevel === 3) detailInstruction = 'Above average detail, describe key aspects thoroughly.';
-                    else if (detailLevel === 4) detailInstruction = 'High detail, include many specific details.';
-                    else if (detailLevel === 5) detailInstruction = 'Maximum detail, describe the smallest nuances, textures, lighting, atmosphere.';
+                    const levels = {
+                        1: 'Minimal detail, only main elements.',
+                        2: 'Medium detail, add a few clarifications.',
+                        3: 'Above average detail, describe key aspects thoroughly.',
+                        4: 'High detail, include many specific details.',
+                        5: 'Maximum detail, describe the smallest nuances, textures, lighting, atmosphere.'
+                    };
+                    detailInstruction = levels[detailLevel];
                 }
 
                 let contextBlock = context ? (lang === 'ru' ? `Дополнительный контекст: ${context}. ` : `Additional context: ${context}. `) : '';
-                let aspectBlock = (visualDirections.includes(direction) && aspect) ? (lang === 'ru' ? `Соотношение сторон: ${aspect}. ` : `Aspect ratio: ${aspect}. `) : '';
-                let tagsBlock = tags.length > 0 ? (lang === 'ru' ? `Особые требования: ${tags.join(', ')}. ` : `Special requirements: ${tags.join(', ')}. `) : '';
+                let aspectBlock = (aspect && (direction === 'image' || direction === 'video' || direction === '3d' || direction === 'design')) 
+                    ? (lang === 'ru' ? `Соотношение сторон: ${aspect}. ` : `Aspect ratio: ${aspect}. `) 
+                    : '';
 
-                // ===== РАСШИРЕННЫЕ ШАБЛОНЫ =====
+                // Теги
+                let tagsBlock = '';
+                if (selectedTags.length > 0) {
+                    tagsBlock = selectedTags.map(tag => tag[lang] || tag.text).join('. ') + '. ';
+                }
+
+                // Расширенные шаблоны
                 let prompt = '';
                 if (lang === 'ru') {
                     switch (direction) {
                         case 'image':
                             prompt = `Создай высококачественное изображение в стиле "${style}" на тему: ${idea}. ${aspectBlock}${contextBlock}${tagsBlock}${detailInstruction} ` +
-                                `Учти композицию (правило третей, симметрия или динамика), цветовую палитру (гармоничная, контрастная или монохромная), освещение (естественное, студийное, неоновое), текстуры и детали. ` +
-                                `Добавь глубину резкости, атмосферные эффекты (туман, дымка, блики). Изображение должно быть готово для профессионального использования. Формат: 8K, высокое разрешение.`;
-                            break;
-                        case 'text':
-                            prompt = `Напиши текст в стиле "${style}" на тему: ${idea}. ${contextBlock}${tagsBlock}${detailInstruction} ` +
-                                `Определи целевую аудиторию и цель. Используй подходящую лексику, риторические приёмы, структуру (введение, основная часть, заключение). ` +
-                                `Объём: развёрнутый, без воды. Добавь примеры, метафоры, если уместно. Тон: ${style}. Учти возможные возражения читателя.`;
+                                `Учти композицию (правило третей, симметрия), цветовую палитру, освещение (естественное, студийное, неоновое), текстуры. ` +
+                                `Добавь глубину резкости, атмосферные эффекты. Изображение должно быть готово для профессионального использования. Формат: 8K, высокое разрешение.`;
                             break;
                         case 'code':
                             prompt = `Напиши код для задачи: ${idea} в стиле "${style}". ${contextBlock}${tagsBlock}${detailInstruction} ` +
-                                `Требования: читаемость, модульность, обработка ошибок, комментарии. Добавь примеры использования, опиши входные и выходные данные. ` +
-                                `Если применимо, используй современные практики. Код должен быть готов к интеграции.`;
+                                `Требования: читаемость, модульность, обработка ошибок, комментарии на русском. ` +
+                                `Добавь примеры использования, опиши входные и выходные данные. Используй современные практики. Код должен быть готов к интеграции.`;
                             break;
                         case 'excel':
-                            prompt = `Создай формулу / макрос / таблицу Excel для задачи: ${idea}. Стиль: "${style}". ${contextBlock}${tagsBlock}${detailInstruction} ` +
-                                `Подробно опиши: какие ячейки задействованы, какие функции использованы, обработка ошибок. Добавь пример данных и результат. ` +
-                                `Если нужен макрос VBA, приведи код с пояснениями. Оформи так, чтобы легко адаптировать.`;
-                            break;
-                        case 'video':
-                            prompt = `Сгенерируй концепцию видео в стиле "${style}" на основе: ${idea}. ${aspectBlock}${contextBlock}${tagsBlock}${detailInstruction} ` +
-                                `Опиши хронометраж, сюжет, ключевые сцены, раскадровку, визуальные эффекты, цветокоррекцию, музыку и звуки. ` +
-                                `Укажи целевую аудиторию и платформу. Добавь рекомендации по монтажу.`;
-                            break;
-                        case 'music':
-                            prompt = `Сочини музыкальный фрагмент в жанре "${style}", вдохновлённый: ${idea}. ${contextBlock}${tagsBlock}${detailInstruction} ` +
-                                `Укажи темп (BPM), тональность, основные инструменты, настроение, структуру (вступление, куплет, припев, бридж, соло). ` +
-                                `Опиши гармонии, ритмический рисунок, возможные эффекты. Предложи варианты аранжировки.`;
-                            break;
-                        case '3d':
-                            prompt = `Создай 3D-модель в стиле "${style}" для сцены: ${idea}. ${aspectBlock}${contextBlock}${tagsBlock}${detailInstruction} ` +
-                                `Опиши топологию, материалы, текстуры, освещение, камеру. Укажи, нужен ли риггинг/анимация. Формат экспорта. ` +
-                                `Модель должна быть готова для рендера в движке.`;
-                            break;
-                        case 'design':
-                            prompt = `Разработай дизайн-концепцию в стиле "${style}" для: ${idea}. ${aspectBlock}${contextBlock}${tagsBlock}${detailInstruction} ` +
-                                `Включи цветовую палитру, типографику, компоновку, ключевые элементы. Добавь примеры использования на разных носителях. ` +
-                                `Опиши пользовательский опыт.`;
+                            prompt = `Создай формулу/макрос/сводную таблицу Excel для задачи: ${idea}. Стиль: "${style}". ${contextBlock}${tagsBlock}${detailInstruction} ` +
+                                `Подробно опиши: какие ячейки задействованы, какие функции использованы, как обрабатываются ошибки. ` +
+                                `Добавь пример данных и результат. Если нужен макрос VBA, приведи код с пояснениями.`;
                             break;
                         case 'marketing':
                             prompt = `Создай маркетинговый текст/кампанию в стиле "${style}" для продукта/услуги: ${idea}. ${contextBlock}${tagsBlock}${detailInstruction} ` +
-                                `Определи целевую аудиторию, боли, УТП. Напиши заголовки, основной текст, призывы к действию. Предложи каналы распространения. ` +
-                                `Тон: ${style}. Добавь варианты A/B тестирования.`;
+                                `Определи целевую аудиторию, её боли и желания. Сформулируй уникальное торговое предложение. Напиши заголовки, основной текст, призывы к действию. ` +
+                                `Предложи каналы распространения. Тон: ${style}. Добавь варианты A/B тестирования.`;
                             break;
                         default:
                             prompt = `Улучшенный промт (${direction}, стиль: ${style}): ${idea}. ${contextBlock}${tagsBlock}${detailInstruction}`;
                     }
-                } else { // английский
+                } else {
                     switch (direction) {
                         case 'image':
                             prompt = `Create a high-quality image in ${style} style based on: ${idea}. ${aspectBlock}${contextBlock}${tagsBlock}${detailInstruction} ` +
-                                `Consider composition, color palette, lighting, textures, details. Add depth of field, atmospheric effects. Image ready for professional use. Format: 8K, high resolution.`;
-                            break;
-                        case 'text':
-                            prompt = `Write a text in ${style} style on: ${idea}. ${contextBlock}${tagsBlock}${detailInstruction} ` +
-                                `Define target audience and purpose. Use appropriate vocabulary, rhetorical devices, structure. Length: detailed but concise. Tone: ${style}.`;
+                                `Consider composition, color palette, lighting, textures. Add depth of field, atmospheric effects. 8K resolution.`;
                             break;
                         case 'code':
-                            prompt = `Write code for task: ${idea} in ${style} style. ${contextBlock}${tagsBlock}${detailInstruction} ` +
-                                `Requirements: readability, modularity, error handling, comments. Add usage examples, describe I/O. Use modern practices if applicable.`;
+                            prompt = `Write code for: ${idea} in ${style} style. ${contextBlock}${tagsBlock}${detailInstruction} ` +
+                                `Requirements: readability, modularity, error handling, comments. Add usage examples. Use modern practices.`;
                             break;
                         case 'excel':
-                            prompt = `Create an Excel formula/macro for: ${idea}. Style: ${style}. ${contextBlock}${tagsBlock}${detailInstruction} ` +
-                                `Describe cells, functions, error handling. Add sample data and result. If VBA, provide code. Make it adaptable.`;
-                            break;
-                        case 'video':
-                            prompt = `Generate a video concept in ${style} style based on: ${idea}. ${aspectBlock}${contextBlock}${tagsBlock}${detailInstruction} ` +
-                                `Describe runtime, storyline, key scenes, storyboard, VFX, color grading, soundtrack. Target audience and platform.`;
-                            break;
-                        case 'music':
-                            prompt = `Compose a music piece in ${style} genre inspired by: ${idea}. ${contextBlock}${tagsBlock}${detailInstruction} ` +
-                                `Specify BPM, key, main instruments, mood, structure. Describe harmonies, rhythm, effects. Suggest arrangement.`;
-                            break;
-                        case '3d':
-                            prompt = `Create a 3D model in ${style} style for: ${idea}. ${aspectBlock}${contextBlock}${tagsBlock}${detailInstruction} ` +
-                                `Describe topology, materials, textures, lighting, camera. Specify rigging/animation. Export format. Ready for rendering.`;
-                            break;
-                        case 'design':
-                            prompt = `Develop a design concept in ${style} style for: ${idea}. ${aspectBlock}${contextBlock}${tagsBlock}${detailInstruction} ` +
-                                `Include color palette, typography, layout, key elements. Usage examples. Describe UX.`;
+                            prompt = `Create Excel formula/macro/pivot for: ${idea}. Style: ${style}. ${contextBlock}${tagsBlock}${detailInstruction} ` +
+                                `Describe cells, functions, error handling. Add sample data and result.`;
                             break;
                         case 'marketing':
                             prompt = `Create marketing text/campaign in ${style} style for: ${idea}. ${contextBlock}${tagsBlock}${detailInstruction} ` +
-                                `Identify audience, pains, USP. Write headlines, body, CTAs. Suggest channels. Tone: ${style}. A/B testing options.`;
+                                `Define target audience, USP, headlines, body text, CTA. Suggest channels. Tone: ${style}.`;
                             break;
                         default:
                             prompt = `Enhanced prompt (${direction}, style: ${style}): ${idea}. ${contextBlock}${tagsBlock}${detailInstruction}`;
@@ -756,15 +854,14 @@
             // ========== 8. ОБРАБОТЧИКИ ==========
             enhanceBtn.addEventListener('click', () => {
                 const dir = directionSelect.value;
-                const autoLang = visualDirections.includes(dir) ? 'en' : 'ru';
-                currentLang = autoLang;
-                langToggle.textContent = currentLang === 'ru' ? '🇷🇺 Русский / 🇬🇧 English' : '🇬🇧 English / 🇷🇺 Русский';
+                currentLang = visualDirections.includes(dir) ? 'en' : 'ru';
+                langToggle.textContent = currentLang === 'ru' ? '🇷🇺 / 🇬🇧' : '🇬🇧 / 🇷🇺';
                 updatePrompt();
             });
 
             langToggle.addEventListener('click', () => {
                 currentLang = currentLang === 'ru' ? 'en' : 'ru';
-                langToggle.textContent = currentLang === 'ru' ? '🇷🇺 Русский / 🇬🇧 English' : '🇬🇧 English / 🇷🇺 Русский';
+                langToggle.textContent = currentLang === 'ru' ? '🇷🇺 / 🇬🇧' : '🇬🇧 / 🇷🇺';
                 updatePrompt();
             });
 
@@ -777,36 +874,24 @@
                         setTimeout(() => {
                             copyBtn.innerHTML = original;
                         }, 1500);
-                    }).catch(() => alert('Не удалось скопировать, выделите текст вручную.'));
-                } else {
-                    alert('Сначала сгенерируйте промт!');
+                    }).catch(() => alert('Не удалось скопировать'));
                 }
             });
 
-            // Чипсы примеров
             document.querySelectorAll('.example-chip').forEach(chip => {
                 chip.addEventListener('click', () => {
                     rawPrompt.value = chip.getAttribute('data-example');
-                    const dir = directionSelect.value;
-                    currentLang = visualDirections.includes(dir) ? 'en' : 'ru';
-                    langToggle.textContent = currentLang === 'ru' ? '🇷🇺 Русский / 🇬🇧 English' : '🇬🇧 English / 🇷🇺 Русский';
-                    updatePrompt();
+                    enhanceBtn.click();
                 });
             });
 
-            // Инициализация
             window.addEventListener('load', () => {
-                updateStyles(); // заполнит стили и теги
-                const dir = directionSelect.value;
-                currentLang = visualDirections.includes(dir) ? 'en' : 'ru';
-                langToggle.textContent = currentLang === 'ru' ? '🇷🇺 Русский / 🇬🇧 English' : '🇬🇧 English / 🇷🇺 Русский';
-                updatePrompt();
+                enhanceBtn.click();
             });
 
             // ========== 9. ПАРАЛЛАКС ==========
             const shapes = document.querySelectorAll('.shape');
-            let mouseX = 0, mouseY = 0;
-            let targetX = 0, targetY = 0;
+            let mouseX = 0, mouseY = 0, targetX = 0, targetY = 0;
             const ease = 0.08;
 
             document.addEventListener('mousemove', (e) => {
@@ -830,11 +915,8 @@
             }
             animateShapes();
 
-            document.addEventListener('mouseleave', () => {
-                targetX = 0; targetY = 0;
-            });
+            document.addEventListener('mouseleave', () => { targetX = 0; targetY = 0; });
         })();
     </script>
-
 </body>
 </html>
