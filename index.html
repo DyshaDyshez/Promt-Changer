@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+	<!-- Временная замена robots.txt -->
+	<meta name="robots" content="index, follow">
+	<link rel="sitemap" type="application/xml" href="https://dyshadyshez.github.io/Promt-Changer/sitemap.xml">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
@@ -1175,5 +1178,19 @@
             document.addEventListener('mouseleave', () => { targetX = 0; targetY = 0; });
         })();
     </script>
+	<script>
+    // Диагностика robots.txt
+    fetch('/Promt-Changer/robots.txt')
+        .then(response => {
+            console.log('robots.txt status:', response.status);
+            if (response.ok) {
+                return response.text();
+            } else {
+                throw new Error('Not found');
+            }
+        })
+        .then(text => console.log('robots.txt content:', text))
+        .catch(err => console.log('robots.txt error:', err.message));
+</script>
 </body>
 </html>
