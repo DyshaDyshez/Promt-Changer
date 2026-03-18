@@ -1,8 +1,9 @@
+User-agent: *
+Allow: /
+Sitemap: https://dyshadyshez.github.io/Promt-Changer/sitemap.xml
+Host: https://dyshadyshez.github.io
+
 User-agent: Yandex
 Allow: /
-
-Sitemap: https://dyshadyshez.github.io/Promt-Changer/sitemap.xml  ← опечатка! должно быть Promt-Changer
-Host: https://dyshadsyhez.github.io/user-agent: *                ← неправильный перенос
-Allow: /
-Sitemap: https://dyshadyshez.github.io/Promt-Changer/sitemap.xml  ← ещё одна опечатка
-Host: https://dyshadsyhez.github.io
+Sitemap: https://dyshadyshez.github.io/Promt-Changer/sitemap.xml
+Host: https://dyshadyshez.github.io
