@@ -611,15 +611,20 @@
         }
 
       /* Подсветка кнопки копирования */
-.copy-btn {
-    position: relative;
-    overflow: hidden;
-    background: linear-gradient(135deg, var(--accent), #6d85f9);
-    color: white;
-    border: none;
-    box-shadow: 0 0 10px rgba(79, 106, 245, 0.3);
-    animation: softPulse 2s ease-in-out infinite;
-}
+ .copy-btn {
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 30px;
+            padding: 0.5rem 1.2rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: 0.2s;
+	        animation: softPulse 2s ease-in-out infinite;
+        }
 
 .copy-btn:hover {
     transform: scale(1.05);
