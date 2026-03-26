@@ -1180,11 +1180,28 @@
 
             // ========== 8. ОБРАБОТЧИКИ ==========
             enhanceBtn.addEventListener('click', () => {
-                const dir = directionSelect.value;
-                currentLang = visualDirections.includes(dir) ? 'en' : 'ru';
-                langToggle.textContent = currentLang === 'ru' ? '🇷🇺 / 🇬🇧' : '🇬🇧 / 🇷🇺';
-                updatePrompt();
+    const dir = directionSelect.value;
+    currentLang = visualDirections.includes(dir) ? 'en' : 'ru';
+    langToggle.textContent = currentLang === 'ru' ? '🇷🇺 / 🇬🇧' : '🇬🇧 / 🇷🇺';
+    updatePrompt();
+    
+    // Плавный скролл к блоку с улучшенным промтом
+    setTimeout(() => {
+        const resultArea = document.querySelector('.result-area');
+        if (resultArea) {
+            resultArea.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
             });
+            // Визуальная подсветка
+            resultArea.style.transition = 'box-shadow 0.3s';
+            resultArea.style.boxShadow = '0 0 0 3px var(--accent)';
+            setTimeout(() => {
+                resultArea.style.boxShadow = '';
+            }, 1000);
+        }
+    }, 100);
+});
 
             langToggle.addEventListener('click', () => {
                 currentLang = currentLang === 'ru' ? 'en' : 'ru';
