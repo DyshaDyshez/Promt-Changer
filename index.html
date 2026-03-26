@@ -1269,13 +1269,14 @@ function smoothScrollToPosition(targetPosition, duration = 800) {
             });
 
             window.addEventListener('load', () => {
-                enhanceBtn.click();
-                
-                // Отправляем событие в Метрику
-                if (typeof ym !== 'undefined') {
-                    ym(107773413, 'reachGoal', 'page_load');
-                }
-            });
+    // Генерируем начальный промт без скролла
+    updatePrompt();
+    
+    // Отправляем событие в Метрику
+    if (typeof ym !== 'undefined') {
+        ym(107773413, 'reachGoal', 'page_load');
+    }
+});
 
             // ========== 9. ПАРАЛЛАКС ==========
             const shapes = document.querySelectorAll('.shape');
