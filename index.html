@@ -1179,30 +1179,69 @@
             }
 
             // ========== 8. ОБРАБОТЧИКИ ==========
-            enhanceBtn.addEventListener('click', () => {
+        enhanceBtn.addEventListener('click', () => {
     const dir = directionSelect.value;
     currentLang = visualDirections.includes(dir) ? 'en' : 'ru';
     langToggle.textContent = currentLang === 'ru' ? '🇷🇺 / 🇬🇧' : '🇬🇧 / 🇷🇺';
     updatePrompt();
     
-    // Плавный скролл к блоку с улучшенным промтом
+    // Ультра мягкий скролл с точной позицией
     setTimeout(() => {
         const resultArea = document.querySelector('.result-area');
         if (resultArea) {
-            resultArea.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-            // Визуальная подсветка
-            resultArea.style.transition = 'box-shadow 0.3s';
-            resultArea.style.boxShadow = '0 0 0 3px var(--accent)';
-            setTimeout(() => {
-                resultArea.style.boxShadow = '';
-            }, 1000);
+            // Получаем позицию элемента
+            const elementRect = resultArea.getBoundingClientRect();
+            const absoluteElementTop = elementRect.top + window.pageYOffset;
+            
+            // Вычисляем позицию: середина окна минус половина высоты элемента
+            const windowHeight = window.innerHeight;
+            const elementHeight = elementRect.height;
+            const offsetPosition = absoluteElementTop - (windowHeight / 2) + (elementHeight / 2);
+            
+            // Плавный скролл с easing функцией
+            smoothScrollToPosition(offsetPosition, 800); // 800ms - очень мягко
         }
     }, 100);
 });
 
+// Функция ультра плавного скролла
+function smoothScrollToPosition(targetPosition, duration = 800) {
+    const startPosition = window.pageYOffset;
+    const distance = targetPosition - startPosition;
+    let startTime = null;
+    
+    // Функция easing для плавного замедления
+    function easeInOutCubic(t) {
+        return t < 0.5 
+            ? 4 * t * t * t 
+            : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+    
+    function animation(currentTime) {
+        if (startTime === null) startTime = currentTime;
+        const timeElapsed = currentTime - startTime;
+        const progress = Math.min(timeElapsed / duration, 1);
+        const ease = easeInOutCubic(progress);
+        
+        window.scrollTo(0, startPosition + (distance * ease));
+        
+        if (timeElapsed < duration) {
+            requestAnimationFrame(animation);
+        } else {
+            // Подсветка после завершения скролла
+            const resultArea = document.querySelector('.result-area');
+            if (resultArea) {
+                resultArea.style.transition = 'box-shadow 0.3s';
+                resultArea.style.boxShadow = '0 0 0 3px var(--accent)';
+                setTimeout(() => {
+                    resultArea.style.boxShadow = '';
+                }, 800);
+            }
+        }
+    }
+    
+    requestAnimationFrame(animation);
+}
             langToggle.addEventListener('click', () => {
                 currentLang = currentLang === 'ru' ? 'en' : 'ru';
                 langToggle.textContent = currentLang === 'ru' ? '🇷🇺 / 🇬🇧' : '🇬🇧 / 🇷🇺';
