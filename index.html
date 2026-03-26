@@ -1259,31 +1259,33 @@ function smoothScrollToPosition(targetPosition, duration = 800) {
     
     requestAnimationFrame(animation);
 }
-            langToggle.addEventListener('click', () => {
-                currentLang = currentLang === 'ru' ? 'en' : 'ru';
-                langToggle.textContent = currentLang === 'ru' ? '🇷🇺 / 🇬🇧' : '🇬🇧 / 🇷🇺';
-                updatePrompt();
-            });
+            // Переменная для хранения таймера вне обработчика
+let copyTimer = null;
 
-            copyBtn.addEventListener('click', () => {
-                const text = enhancedDiv.textContent;
-                if (text && text !== 'Здесь появится улучшенная версия...') {
-                    navigator.clipboard.writeText(text).then(() => {
-                        const original = copyBtn.innerHTML;
-                        copyBtn.innerHTML = '<span>✅</span> Скопировано!';
-                        setTimeout(() => {
-                            copyBtn.innerHTML = original;
-                        }, 1500);
-                    }).catch(() => alert('Не удалось скопировать'));
-                }
-            });
-
-            document.querySelectorAll('.example-chip').forEach(chip => {
-                chip.addEventListener('click', () => {
-                    rawPrompt.value = chip.getAttribute('data-example');
-                    enhanceBtn.click();
-                });
-            });
+copyBtn.addEventListener('click', () => {
+    const text = enhancedDiv.textContent;
+    if (text && text !== 'Здесь появится улучшенная версия...') {
+        navigator.clipboard.writeText(text).then(() => {
+            // Если уже есть активный таймер, очищаем его
+            if (copyTimer) {
+                clearTimeout(copyTimer);
+            }
+            
+            // Сохраняем оригинальный HTML
+            const original = copyBtn.innerHTML;
+            
+            // Меняем текст кнопки
+            copyBtn.innerHTML = '<span>✅</span> Скопировано!';
+            
+            // Устанавливаем новый таймер на возврат
+            copyTimer = setTimeout(() => {
+                copyBtn.innerHTML = original;
+                copyTimer = null;
+            }, 1500);
+            
+        }).catch(() => alert('Не удалось скопировать'));
+    }
+});
 
             window.addEventListener('load', () => {
     // Генерируем начальный промт без скролла
