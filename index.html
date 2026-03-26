@@ -760,6 +760,181 @@
             .aspect-btn[data-ratio] { width: auto !important; flex: 1; }
             .footer { flex-direction: column; gap: 0.5rem; }
         }
+
+
+		
+/* ===== БЛОК ОТЗЫВОВ ===== */
+.reviews-widget {
+    margin-top: 2rem;
+    background: var(--result-bg);
+    border-radius: 24px;
+    padding: 1.5rem;
+    border: 1px solid var(--input-border);
+}
+
+.reviews-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.reviews-header h3 {
+    font-size: 1.2rem;
+    color: var(--text-primary);
+}
+
+.avg-rating {
+    background: var(--accent);
+    padding: 0.3rem 0.8rem;
+    border-radius: 40px;
+    color: white;
+    font-size: 0.9rem;
+}
+
+.leave-review-btn {
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 40px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    color: var(--text-primary);
+    transition: 0.2s;
+}
+
+.leave-review-btn:hover {
+    background: var(--accent);
+    color: white;
+}
+
+/* Модальное окно */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: var(--panel-bg);
+    backdrop-filter: blur(10px);
+    padding: 2rem;
+    border-radius: 24px;
+    max-width: 500px;
+    width: 90%;
+    border: 1px solid var(--input-border);
+}
+
+.modal-content input,
+.modal-content textarea {
+    width: 100%;
+    margin-bottom: 1rem;
+    padding: 0.8rem;
+    border-radius: 12px;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    color: var(--text-primary);
+}
+
+.star-rating {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.star-rating span {
+    cursor: pointer;
+    color: #cbd5e0;
+}
+
+.star-rating span.selected {
+    color: #fbbf24;
+}
+
+.submit-review {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 0.8rem;
+    border-radius: 40px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: 600;
+}
+
+.close-modal {
+    float: right;
+    cursor: pointer;
+    font-size: 1.5rem;
+}
+
+/* Список отзывов */
+.reviews-list {
+    margin-top: 1rem;
+}
+
+.review-item {
+    background: var(--input-bg);
+    border-radius: 16px;
+    padding: 1rem;
+    margin-bottom: 0.8rem;
+    border: 1px solid var(--input-border);
+}
+
+.review-name {
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 0.3rem;
+}
+
+.review-stars {
+    color: #fbbf24;
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.review-text {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+}
+
+.review-date {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+.loading {
+    text-align: center;
+    padding: 1rem;
+    color: var(--text-muted);
+}
+
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--accent);
+    color: white;
+    padding: 0.8rem 1.2rem;
+    border-radius: 40px;
+    z-index: 1001;
+}
+		
+
+
+
+
+		
     </style>
 </head>
 <body>
@@ -900,6 +1075,47 @@
         </div>
     </div>
 
+
+	
+
+<!-- БЛОК ОТЗЫВОВ -->
+<div class="reviews-widget">
+    <div class="reviews-header">
+        <h3>⭐ Отзывы пользователей</h3>
+        <div class="avg-rating" id="avgRating">⭐ 0.0</div>
+        <button class="leave-review-btn" id="leaveReviewBtn">✍️ Оставить отзыв</button>
+    </div>
+    
+    <div class="reviews-list" id="reviewsList">
+        <div class="loading">Загрузка отзывов...</div>
+    </div>
+</div>
+
+<!-- МОДАЛЬНОЕ ОКНО ДЛЯ ОТЗЫВА -->
+<div id="reviewModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" id="closeModal">&times;</span>
+        <h3 style="margin-bottom: 1rem;">Оставить отзыв</h3>
+        
+        <input type="text" id="reviewName" placeholder="Ваше имя (необязательно)">
+        
+        <div class="star-rating" id="starRating">
+            <span data-rating="1">☆</span>
+            <span data-rating="2">☆</span>
+            <span data-rating="3">☆</span>
+            <span data-rating="4">☆</span>
+            <span data-rating="5">☆</span>
+        </div>
+        
+        <textarea id="reviewText" rows="3" placeholder="Ваш отзыв (минимум 10 символов)"></textarea>
+        
+        <button class="submit-review" id="submitReview">📤 Отправить отзыв</button>
+    </div>
+</div>
+
+
+	
+	
     <script>
         (function() {
             // ========== 1. ДАННЫЕ ==========
@@ -1289,5 +1505,6 @@
   }
 }
 </script>
+	
 </body>
 </html>
