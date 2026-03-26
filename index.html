@@ -1259,34 +1259,40 @@ function smoothScrollToPosition(targetPosition, duration = 800) {
     
     requestAnimationFrame(animation);
 }
-            // Переменная для хранения таймера вне обработчика
-let copyTimer = null;
-
-copyBtn.addEventListener('click', () => {
-    const text = enhancedDiv.textContent;
-    if (text && text !== 'Здесь появится улучшенная версия...') {
-        navigator.clipboard.writeText(text).then(() => {
-            // Если уже есть активный таймер, очищаем его
-            if (copyTimer) {
-                clearTimeout(copyTimer);
-            }
-            
-            // Сохраняем оригинальный HTML
-            const original = copyBtn.innerHTML;
-            
-            // Меняем текст кнопки
-            copyBtn.innerHTML = '<span>✅</span> Скопировано!';
-            
-            // Устанавливаем новый таймер на возврат
-            copyTimer = setTimeout(() => {
-                copyBtn.innerHTML = original;
-                copyTimer = null;
-            }, 1500);
-            
-        }).catch(() => alert('Не удалось скопировать'));
-    }
-});
-
+           
+// Исправленный обработчик копирования
+if (copyBtn) {
+    let copyTimer = null;
+    const originalHTML = copyBtn.innerHTML; // Сохраняем оригинал один раз
+    
+    copyBtn.addEventListener('click', function() {
+        const text = enhancedDiv.textContent;
+        if (text && text !== 'Здесь появится улучшенная версия...') {
+            navigator.clipboard.writeText(text).then(() => {
+                // Очищаем предыдущий таймер
+                if (copyTimer) {
+                    clearTimeout(copyTimer);
+                }
+                
+                // Меняем текст
+                this.innerHTML = '<span>✅</span> Скопировано!';
+                
+                // Визуальный эффект
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    if (this) this.style.transform = '';
+                }, 200);
+                
+                // Устанавливаем новый таймер
+                copyTimer = setTimeout(() => {
+                    this.innerHTML = originalHTML;
+                    copyTimer = null;
+                }, 1500);
+                
+            }).catch(() => alert('Не удалось скопировать'));
+        }
+    });
+}
             window.addEventListener('load', () => {
     // Генерируем начальный промт без скролла
     updatePrompt();
