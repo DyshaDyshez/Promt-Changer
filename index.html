@@ -1186,20 +1186,6 @@
                 updatePrompt();
             });
 
-			setTimeout(() => {
-        const resultArea = document.querySelector('.result-area');
-        if (resultArea) {
-            resultArea.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-            // Визуальная подсветка
-            resultArea.style.transition = 'box-shadow 0.3s';
-            resultArea.style.boxShadow = '0 0 0 3px var(--accent)';
-            setTimeout(() => {
-                resultArea.style.boxShadow = '';
-            }, 1000);
-
             langToggle.addEventListener('click', () => {
                 currentLang = currentLang === 'ru' ? 'en' : 'ru';
                 langToggle.textContent = currentLang === 'ru' ? '🇷🇺 / 🇬🇧' : '🇬🇧 / 🇷🇺';
