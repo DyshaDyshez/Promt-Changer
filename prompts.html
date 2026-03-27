@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    
+    <!-- Основные мета-теги (исправлено дублирование) -->
+    <title>Готовые промты для нейросетей | Промт-мастер — 100+ шаблонов</title>
+    <meta name="description" content="Коллекция готовых промтов для Midjourney, ChatGPT, DALL-E, Stable Diffusion. 100+ проверенных шаблонов для изображений, текста, кода, бизнеса. Копируй и используй сразу! Бесплатно.">
+    <meta name="keywords" content="готовые промты, промты для midjourney, промты для chatgpt, шаблоны промтов, промты для нейросетей, коллекция промтов, промты для бизнеса, промты для кода, prompt templates, ai prompts library, best prompts, ai prompt library, midjourney prompts, chatgpt prompts, prompt examples, prompt ideas, ai art prompts, business prompts, coding prompts, seo prompts, social media prompts">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Готовые промты для нейросетей | Промт-мастер">
+    <meta property="og:description" content="100+ готовых шаблонов промтов для Midjourney, ChatGPT, DALL-E, Stable Diffusion. Бесплатно, без регистрации. Копируй и используй!">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://dyshadyshez.github.io/Promt-Changer/prompts.html">
+    <meta property="og:image" content="https://dyshadyshez.github.io/Promt-Changer/og-image.png">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Готовые промты для нейросетей | Промт-мастер">
+    <meta name="twitter:description" content="Коллекция проверенных промтов для AI-генерации. Midjourney, ChatGPT, DALL-E, Stable Diffusion. Копируй и используй!">
+    
+    <!-- Для поисковиков -->
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="googlebot" content="index, follow">
+    <meta name="yandex" content="index, follow">
+    <meta name="author" content="dyshadyshez">
+    <meta name="theme-color" content="#4f6af5">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    
+    <style>
+        /* Дополнительные стили для страницы промтов */
+        .library-header {
+            text-align: center;
+            margin: 1rem 0 2rem;
+        }
+        .library-header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .library-header p {
+            color: var(--text-muted);
+        }
+        
+        /* Категории */
+        .categories-filter {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+        .category-btn {
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 40px;
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.2s;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+        @media (max-width: 700px) {
+            .category-btn {
+                white-space: normal;
+                font-size: 0.75rem;
+                padding: 0.4rem 0.8rem;
+            }
+        }
+        .category-btn:hover, .category-btn.active {
+            background: var(--accent);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        /* Кнопка сортировки */
+        .sort-btn {
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 40px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        .sort-btn:hover {
+            background: var(--accent);
+            color: white;
+            transform: translateY(-1px);
+        }
+        .sort-btn.active {
+            background: var(--accent);
+            color: white;
+        }
+        
+        /* Сетка карточек */
+        .prompts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+@media (max-width: 550px) {
+    .prompts-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+        
+        /* Карточка промта */
+        .prompt-card {
+            background: var(--result-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 24px;
+            padding: 1.2rem;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        .prompt-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+        }
+        
+        /* Изображение карточки */
+        .prompt-card-image {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 16px;
+            margin-bottom: 1rem;
+            background: var(--input-bg);
+        }
+        
+        /* Категория */
+        .prompt-category {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            margin-bottom: 0.8rem;
+            align-self: flex-start;
+        }
+        
+        /* Заголовок */
+        .prompt-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            line-height: 1.3;
+        }
+        
+        /* Описание */
+        .prompt-description {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin-bottom: 0.8rem;
+            line-height: 1.4;
+        }
+        
+        /* Теги */
+        .prompt-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-bottom: 1rem;
+        }
+        .prompt-tag {
+            background: var(--input-bg);
+            padding: 0.2rem 0.6rem;
+            border-radius: 15px;
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Превью промта */
+        .prompt-text-preview {
+            background: var(--input-bg);
+            padding: 0.7rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            font-family: monospace;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        /* Футер карточки */
+        .prompt-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .copy-count {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+        .prompt-footer .button-group {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .copy-prompt-btn, .improve-prompt-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.5rem 0.8rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: 0.2s;
+            font-size: 0.75rem;
+            white-space: nowrap;
+        }
+        .improve-prompt-btn {
+            background: var(--input-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--input-border);
+        }
+        .improve-prompt-btn:hover {
+            background: var(--accent);
+            color: white;
+        }
+        .copy-prompt-btn:hover {
+            transform: scale(1.02);
+            filter: brightness(1.1);
+        }
+        @media (max-width: 480px) {
+            .prompt-footer {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .copy-count {
+                text-align: center;
+                margin-bottom: 0.3rem;
+            }
+            .prompt-footer .button-group {
+                justify-content: center;
+            }
+            .copy-prompt-btn, .improve-prompt-btn {
+                flex: 1;
+                text-align: center;
+                white-space: normal;
+                font-size: 0.7rem;
+            }
+        }
+        
+        /* Модальное окно */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background: var(--panel-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 1.5rem;
+            max-width: 650px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            border: 1px solid var(--input-border);
+            box-shadow: 0 20px 35px rgba(0,0,0,0.3);
+        }
+        @media (max-width: 700px) {
+            .modal-content {
+                padding: 1rem;
+                width: 95%;
+            }
+        }
+        .modal-content h3 {
+            margin-bottom: 1rem;
+            color: var(--accent);
+            font-size: 1.3rem;
+        }
+        .modal-full-prompt {
+            background: var(--input-bg);
+            border-radius: 16px;
+            padding: 0.8rem;
+            margin: 1rem 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-break: break-word;
+            font-size: 0.85rem;
+            border: 1px solid var(--input-border);
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        .modal-buttons button {
+            flex: 1;
+            padding: 0.7rem;
+            border-radius: 40px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .modal-copy {
+            background: var(--accent);
+            color: white;
+        }
+        .modal-improve {
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-primary);
+        }
+        .close-modal {
+            float: right;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+        
+        /* Окно улучшения */
+        .improve-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 1.2rem;
+            max-width: 480px;
+            width: 90%;
+            z-index: 3000;
+            border: 1px solid var(--accent);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            animation: slideIn 0.3s ease;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        @media (max-width: 500px) {
+            .improve-popup {
+                padding: 1rem;
+                width: 95%;
+            }
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -40%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+        .improve-popup h4 {
+            margin-bottom: 1rem;
+            color: var(--accent);
+            font-size: 1.2rem;
+        }
+        .improve-popup select, .improve-popup input, .improve-popup textarea {
+            width: 100%;
+            padding: 0.6rem;
+            margin-bottom: 0.8rem;
+            border-radius: 30px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-primary);
+            font-size: 0.85rem;
+        }
+        .improve-popup textarea {
+            min-height: 70px;
+            border-radius: 16px;
+            resize: vertical;
+        }
+        .improve-popup .popup-buttons {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        .improve-popup .popup-buttons button {
+            flex: 1;
+            padding: 0.6rem;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        .generate-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+        }
+        .cancel-btn {
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-primary);
+        }
+        .improve-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2999;
+        }
+        
+        /* Результат улучшения */
+        .improved-result {
+            margin-top: 1rem;
+            padding: 0.8rem;
+            background: var(--accent);
+            border-radius: 16px;
+            color: white;
+            font-size: 0.8rem;
+            word-break: break-word;
+        }
+        .copy-improved {
+            margin-top: 0.5rem;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 30px;
+            cursor: pointer;
+            color: white;
+            font-size: 0.75rem;
+        }
+        
+        /* Теги-облако */
+        .tags-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin: 0.8rem 0;
+        }
+        .suggestion-tag {
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 30px;
+            padding: 0.2rem 0.7rem;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .suggestion-tag:hover {
+            background: var(--accent);
+            color: white;
+        }
+        
+        .loading, .error-message {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+        }
+        
+        /* Адаптация шапки */
+        @media (max-width: 700px) {
+            .header {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .header > div:first-child {
+                width: 100%;
+                justify-content: center;
+            }
+            .main-nav {
+                order: 2;
+            }
+            .theme-toggle {
+                order: 3;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="shapes" id="parallaxShapes">
+        <div class="shape shape1" data-depth="0.4"></div>
+        <div class="shape shape2" data-depth="0.7"></div>
+        <div class="shape shape3" data-depth="0.2"></div>
+        <div class="shape shape4" data-depth="0.9"></div>
+        <div class="shape shape5" data-depth="0.5"></div>
+    </div>
+
+    <div class="main-panel">
+        <div class="header">
+            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; justify-content: center;">
+                <img src="ref_img/ready_promts.png" alt="Промт-мастер" style="height: 60px; width: auto; border-radius: 8px;">
+                <span style="font-size: 1.6rem; font-weight: 500; background: linear-gradient(to right, #4f6af5, #b0c0ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Промт-мастер</span>
+            </div>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link">Главная</a>
+                <a href="prompts.html" class="nav-link active">Готовые промты</a>
+            </nav>
+            <div class="theme-toggle" id="themeToggle">
+                <span>🌙</span>
+                <span>Тема</span>
+            </div>
+        </div>
+
+        <div class="library-header">
+            <h1>📚 Готовые промты</h1>
+            <p>Выберите категорию и скопируйте промт для своей нейросети</p>
+        </div>
+
+        <div class="categories-filter" id="categoriesFilter">
+            <button class="category-btn active" data-category="all">🎯 Все</button>
+            <button class="category-btn" data-category="photo">📷 Фото</button>
+            <button class="category-btn" data-category="chatgpt">💬 Текст</button>
+            <button class="category-btn" data-category="business">💼 Бизнес</button>
+            <button class="category-btn" data-category="creative">✨ Креатив</button>
+            <button class="category-btn" data-category="code">💻 Код</button>
+            <button class="category-btn" data-category="excel">📊 Excel</button>
+            <button class="category-btn" data-category="video">🎬 Видео</button>
+            <button class="category-btn" data-category="music">🎵 Музыка</button>
+            <button class="category-btn" data-category="design">🎨 Дизайн</button>
+            <button class="category-btn" data-category="social">📱 Соцсети</button>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
+            <button id="sortByCopiesBtn" class="sort-btn">
+                📊 По популярности ↓
+            </button>
+        </div>
+
+        <div class="prompts-grid" id="promptsGrid">
+            <div class="loading">Загрузка промтов...</div>
+        </div>
+
+        <div class="share-buttons">
+            <a href="https://t.me/share/url?url=https://dyshadyshez.github.io/Promt-Changer/&text=Промт-мастер — готовые промты для нейросетей" target="_blank" class="share-btn">Share 📱 Telegram</a>
+            <a href="https://vk.com/share.php?url=https://dyshadyshez.github.io/Promt-Changer/" target="_blank" class="share-btn">Share 📘 VK</a>
+        </div>
+
+        <div class="footer">
+            <a href="https://github.com/dyshadyshez/Promt-Changer" target="_blank">GitHub</a>
+            <span>•</span>
+            <span>Промт-мастер v2.0</span>
+            <span>•</span>
+            <span>DyshaDyshez</span>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // ========== НАСТРОЙКИ SUPABASE ==========
+        const SUPABASE_URL = 'https://ligmsihssbvolgdogaqm.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_gC9UkfH2xkJGqGlnIgd-YA_7Ksa09Xb';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        // ========== ПЕРЕМЕННЫЕ ==========
+        let allPrompts = [];
+        let currentCategory = 'all';
+        let sortMode = 'default';
+        
+        // ========== КАТЕГОРИИ С НАСТРОЙКАМИ ==========
+        const categoryImproveConfig = {
+            photo: {
+                title: "📷 Настрой улучшения изображения",
+                fields: [
+                    { name: "style", label: "Стиль", type: "select", options: ["реализм", "киберпанк", "фэнтези", "импрессионизм", "минимализм", "сюрреализм", "акварель", "аниме"] },
+                    { name: "aspect", label: "Соотношение сторон", type: "select", options: ["16:9", "1:1", "9:16", "21:9"] },
+                    { name: "purpose", label: "Тип", type: "select", options: ["На моем фото", "Для персонажа", "Для продукта", "Для пейзажа", "Абстракция"] },
+                    { name: "detail", label: "Детализация", type: "range", min: 1, max: 5, default: 3 },
+                    { name: "context", label: "Дополнительный контекст", type: "textarea", placeholder: "Неон, город, природа, футуризм..." }
+                ],
+                tags: ["портрет", "пейзаж", "неон", "киберпанк", "реализм", "фэнтези", "минимализм", "8k", "hdr"]
+            },
+            chatgpt: {
+                title: "💬 Настрой улучшения текста",
+                fields: [
+                    { name: "tone", label: "Тон текста", type: "select", options: ["официальный", "дружелюбный", "юмористический", "убедительный", "научный", "поэтический"] },
+                    { name: "length", label: "Объём", type: "select", options: ["кратко", "средне", "развёрнуто"] },
+                    { name: "detail", label: "Детализация", type: "range", min: 1, max: 5, default: 3 },
+                    { name: "context", label: "Дополнительный контекст", type: "textarea", placeholder: "Целевая аудитория, ключевые сообщения..." }
+                ],
+                tags: ["пост", "статья", "письмо", "сценарий", "резюме", "описание", "обзор", "инструкция"]
+            },
+            business: {
+                title: "💼 Настрой улучшения бизнес-контента",
+                fields: [
+                    { name: "style", label: "Стиль", type: "select", options: ["убедительный", "информационный", "вирусный", "сторителлинг", "лаконичный"] },
+                    { name: "target", label: "Целевая аудитория", type: "select", options: ["B2B", "B2C", "инвесторы", "партнёры", "стартапы"] },
+                    { name: "detail", label: "Детализация", type: "range", min: 1, max: 5, default: 3 },
+                    { name: "context", label: "Дополнительный контекст", type: "textarea", placeholder: "Уникальное предложение, бюджет, сроки..." }
+                ],
+                tags: ["продажи", "маркетинг", "сео", "реклама", "кп", "письмо", "стратегия", "аналитика"]
+            },
+            code: {
+                title: "💻 Настрой улучшения кода",
+                fields: [
+                    { name: "style", label: "Стиль кода", type: "select", options: ["чистый", "комментированный", "оптимизированный", "ООП", "функциональный"] },
+                    { name: "language", label: "Язык", type: "select", options: ["JavaScript", "Python", "TypeScript", "SQL", "другой"] },
+                    { name: "detail", label: "Детализация", type: "range", min: 1, max: 5, default: 3 },
+                    { name: "context", label: "Дополнительные требования", type: "textarea", placeholder: "Библиотеки, фреймворки, примеры..." }
+                ],
+                tags: ["react", "python", "sql", "api", "docker", "тесты", "алгоритм", "оптимизация"]
+            },
+            excel: {
+                title: "📊 Настрой улучшения Excel",
+                fields: [
+                    { name: "type", label: "Тип", type: "select", options: ["формула", "макрос VBA", "сводная таблица", "диаграмма"] },
+                    { name: "complexity", label: "Сложность", type: "select", options: ["базовый", "продвинутый", "экспертный"] },
+                    { name: "detail", label: "Детализация", type: "range", min: 1, max: 5, default: 3 },
+                    { name: "context", label: "Данные и требования", type: "textarea", placeholder: "Структура данных, нужные функции..." }
+                ],
+                tags: ["vlookup", "сводная", "макрос", "диаграмма", "формула", "анализ", "дашборд"]
+            },
+            creative: {
+                title: "✨ Настрой улучшения креатива",
+                fields: [
+                    { name: "style", label: "Стиль", type: "select", options: ["поэтический", "игровой", "эпический", "минималистичный", "сюрреалистичный"] },
+                    { name: "mood", label: "Настроение", type: "select", options: ["радостное", "таинственное", "драматичное", "романтичное", "юмористичное"] },
+                    { name: "detail", label: "Детализация", type: "range", min: 1, max: 5, default: 3 },
+                    { name: "context", label: "Дополнительный контекст", type: "textarea", placeholder: "Персонажи, локации, ключевые элементы..." }
+                ],
+                tags: ["история", "сценарий", "поэзия", "персонаж", "мир", "приключение", "фантазия"]
+            },
+            social: {
+                title: "📱 Настрой улучшения для соцсетей",
+                fields: [
+                    { name: "type", label: "Тип контента", type: "select", options: ["Картинка / Изображение", "Пост / Текст", "Сторис", "Reels / Видео"] },
+                    { name: "platform", label: "Платформа", type: "select", options: ["Instagram", "Telegram", "VK", "TikTok", "Twitter"] },
+                    { name: "style", label: "Стиль", type: "select", options: ["экспертный", "развлекательный", "вовлекающий", "продающий", "личный"] },
+                    { name: "detail", label: "Детализация", type: "range", min: 1, max: 5, default: 3 },
+                    { name: "context", label: "Дополнительный контекст", type: "textarea", placeholder: "Тема, целевая аудитория, ключевые хэштеги..." }
+                ],
+                tags: ["пост", "сторис", "reels", "instagram", "telegram", "vkontakte", "tiktok", "вовлечение"]
+            }
+        };
+        
+        const defaultConfig = {
+            title: "✨ Настрой улучшения",
+            fields: [
+                { name: "detail", label: "Детализация", type: "range", min: 1, max: 5, default: 3 },
+                { name: "context", label: "Дополнительный контекст", type: "textarea", placeholder: "Что нужно учесть?" }
+            ],
+            tags: ["улучшить", "детализировать", "оптимизировать"]
+        };
+        
+        // ========== ТЕМА ==========
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+                updateThemeToggleText(savedTheme);
+            } else {
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const theme = prefersDark ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', theme);
+                updateThemeToggleText(theme);
+            }
+        }
+        
+        function updateThemeToggleText(theme) {
+            const toggle = document.getElementById('themeToggle');
+            if (toggle) {
+                toggle.innerHTML = theme === 'dark' ? '<span>☀️</span><span>Светлая</span>' : '<span>🌙</span><span>Тёмная</span>';
+            }
+        }
+        
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            updateThemeToggleText(theme);
+        }
+        
+        const themeToggleBtn = document.getElementById('themeToggle');
+        if (themeToggleBtn) {
+            themeToggleBtn.addEventListener('click', () => {
+                const current = document.documentElement.getAttribute('data-theme');
+                const newTheme = current === 'dark' ? 'light' : 'dark';
+                setTheme(newTheme);
+            });
+        }
+        initTheme();
+        
+        // ========== ФУНКЦИИ РАБОТЫ С ПРОМТАМИ ==========
+        async function loadPromptsFromSupabase() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('prompts')
+                    .select('*')
+                    .order('id', { ascending: true });
+                if (error) throw error;
+                allPrompts = data || [];
+                renderPrompts(currentCategory);
+                if (allPrompts.length === 0) {
+                    document.getElementById('promptsGrid').innerHTML = '<div class="loading">📭 Пока нет промтов. Добавьте их в админ-панели!</div>';
+                }
+                return allPrompts;
+            } catch (error) {
+                console.error(error);
+                document.getElementById('promptsGrid').innerHTML = '<div class="error-message">❌ Не удалось загрузить промты. Проверьте подключение к Supabase.</div>';
+                return [];
+            }
+        }
+        
+        async function incrementCopyCount(promptId, currentCount) {
+            try {
+                await supabaseClient
+                    .from('prompts')
+                    .update({ copies: (currentCount || 0) + 1 })
+                    .eq('id', promptId);
+            } catch (error) {
+                console.error('Ошибка обновления счётчика:', error);
+            }
+        }
+        
+        function sortPrompts(prompts, mode) {
+            if (mode === 'popular') {
+                return [...prompts].sort((a, b) => (b.copies || 0) - (a.copies || 0));
+            }
+            return [...prompts];
+        }
+        
+        function renderPrompts(category = "all") {
+            const container = document.getElementById('promptsGrid');
+            if (!container) return;
+            
+            let filtered = category === "all" ? allPrompts : allPrompts.filter(p => p.category === category);
+            filtered = sortPrompts(filtered, sortMode);
+            
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="loading">😕 Нет промтов в этой категории</div>';
+                return;
+            }
+            
+            container.innerHTML = filtered.map(prompt => {
+                const imageUrl = prompt.image_url || '';
+                const copies = prompt.copies || 0;
+                
+                return `
+                    <div class="prompt-card" data-prompt='${JSON.stringify(prompt)}'>
+                        ${imageUrl ? `<img class="prompt-card-image" src="${escapeHtml(imageUrl)}" alt="${escapeHtml(prompt.title)}" loading="lazy">` : ''}
+                        <div class="prompt-category">${getCategoryIcon(prompt.category)} ${getCategoryName(prompt.category)}</div>
+                        <h3 class="prompt-title">${escapeHtml(prompt.title)}</h3>
+                        <p class="prompt-description">${escapeHtml(prompt.description || '')}</p>
+                        <div class="prompt-tags">${prompt.tags ? prompt.tags.map(tag => `<span class="prompt-tag">#${escapeHtml(tag)}</span>`).join('') : ''}</div>
+                        <div class="prompt-text-preview" title="${escapeHtml(prompt.prompt)}">${escapeHtml(prompt.prompt.substring(0, 80))}...</div>
+                        <div class="prompt-footer">
+                            <span class="copy-count">📋 Копирований: ${copies}</span>
+                            <div class="button-group">
+                                <button class="copy-prompt-btn" data-id="${prompt.id}" data-prompt="${escapeHtml(prompt.prompt)}" data-copies="${copies}">
+                                    📋 Копировать
+                                </button>
+                                <button class="improve-prompt-btn" data-prompt='${JSON.stringify(prompt)}'>
+                                    ✨ Улучшить
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            document.querySelectorAll('.copy-prompt-btn').forEach(btn => {
+                btn.addEventListener('click', async function(e) {
+                    e.stopPropagation();
+                    const promptText = this.getAttribute('data-prompt');
+                    const promptId = parseInt(this.getAttribute('data-id'));
+                    const currentCopies = parseInt(this.getAttribute('data-copies')) || 0;
+                    await handleCopy(promptText, promptId, currentCopies, this);
+                });
+            });
+            
+            document.querySelectorAll('.improve-prompt-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const promptData = JSON.parse(btn.getAttribute('data-prompt'));
+                    openImprovePopup(promptData);
+                });
+            });
+            
+            document.querySelectorAll('.prompt-card').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    if (e.target.closest('.copy-prompt-btn') || e.target.closest('.improve-prompt-btn')) return;
+                    const promptData = JSON.parse(card.dataset.prompt);
+                    openModal(promptData);
+                });
+            });
+        }
+        
+        async function handleCopy(promptText, promptId, currentCopies, buttonElement) {
+            try {
+                await navigator.clipboard.writeText(promptText);
+                await incrementCopyCount(promptId, currentCopies);
+                
+                const idx = allPrompts.findIndex(p => p.id === promptId);
+                if (idx !== -1) allPrompts[idx].copies = currentCopies + 1;
+                
+                const original = buttonElement.innerHTML;
+                buttonElement.innerHTML = '✅ Скопировано!';
+                setTimeout(() => { buttonElement.innerHTML = original; }, 1500);
+                
+                const copySpan = buttonElement.closest('.prompt-card')?.querySelector('.copy-count');
+                if (copySpan) copySpan.textContent = `📋 Копирований: ${currentCopies + 1}`;
+                
+                renderPrompts(currentCategory);
+            } catch (err) {
+                alert('Не удалось скопировать текст');
+            }
+        }
+        
+        // ========== ФУНКЦИЯ УЛУЧШЕНИЯ ==========
+        function openImprovePopup(prompt) {
+            const config = categoryImproveConfig[prompt.category] || defaultConfig;
+            
+            const overlay = document.createElement('div');
+            overlay.className = 'improve-overlay';
+            
+            const popup = document.createElement('div');
+            popup.className = 'improve-popup';
+            
+            let fieldsHtml = '';
+            config.fields.forEach(field => {
+                if (field.type === 'select') {
+                    fieldsHtml += `
+                        <label style="display: block; margin-bottom: 0.3rem; font-size: 0.75rem;">${field.label}</label>
+                        <select id="improve_${field.name}">
+                            ${field.options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+                        </select>
+                    `;
+                } else if (field.type === 'range') {
+                    const defaultValue = field.default || 3;
+                    fieldsHtml += `
+                        <label style="display: block; margin-bottom: 0.3rem; font-size: 0.75rem;">${field.label}: <span id="improve_${field.name}_value">${defaultValue}</span></label>
+                        <input type="range" id="improve_${field.name}" min="${field.min}" max="${field.max}" value="${defaultValue}" step="1" oninput="document.getElementById('improve_${field.name}_value').textContent = this.value">
+                    `;
+                } else if (field.type === 'textarea') {
+                    fieldsHtml += `
+                        <label style="display: block; margin-bottom: 0.3rem; font-size: 0.75rem;">${field.label}</label>
+                        <textarea id="improve_${field.name}" rows="2" placeholder="${field.placeholder || ''}"></textarea>
+                    `;
+                }
+            });
+            
+            const tagsHtml = config.tags ? `
+                <div style="margin: 0.8rem 0;">
+                    <label style="display: block; margin-bottom: 0.4rem; font-size: 0.75rem;">🏷️ Добавить теги:</label>
+                    <div class="tags-cloud" id="tagsCloud">
+                        ${config.tags.map(tag => `<span class="suggestion-tag" data-tag="${tag}">#${tag}</span>`).join('')}
+                    </div>
+                </div>
+            ` : '';
+            
+            popup.innerHTML = `
+                <h4>${config.title}</h4>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.8rem;">
+                    Исходный промт: <strong>${escapeHtml(prompt.title)}</strong>
+                </p>
+                ${fieldsHtml}
+                ${tagsHtml}
+                <div class="popup-buttons">
+                    <button class="generate-btn" id="generateImprovedBtn">✨ Улучшить</button>
+                    <button class="cancel-btn" id="cancelImproveBtn">Отмена</button>
+                </div>
+                <div id="improvedResult" style="margin-top: 0.8rem;"></div>
+            `;
+            
+            document.body.appendChild(overlay);
+            document.body.appendChild(popup);
+            
+            setTimeout(() => {
+                const tags = document.querySelectorAll('.suggestion-tag');
+                tags.forEach(tag => {
+                    tag.addEventListener('click', () => {
+                        const tagText = tag.getAttribute('data-tag');
+                        const contextField = document.getElementById('improve_context');
+                        if (contextField) {
+                            const current = contextField.value;
+                            contextField.value = current ? `${current}, ${tagText}` : tagText;
+                        }
+                    });
+                });
+            }, 100);
+            
+            document.getElementById('cancelImproveBtn').onclick = () => {
+                overlay.remove();
+                popup.remove();
+            };
+            
+            overlay.onclick = () => {
+                overlay.remove();
+                popup.remove();
+            };
+            
+            document.getElementById('generateImprovedBtn').onclick = () => {
+                const values = {};
+                config.fields.forEach(field => {
+                    const el = document.getElementById(`improve_${field.name}`);
+                    if (el) values[field.name] = el.value;
+                });
+                
+                const improvedPrompt = generateImprovedPrompt(prompt, values);
+                
+                const resultDiv = document.getElementById('improvedResult');
+                resultDiv.innerHTML = `
+                    <div class="improved-result">
+                        <strong>✨ Улучшенный промт:</strong><br>
+                        ${escapeHtml(improvedPrompt)}
+                        <button class="copy-improved" id="copyImprovedBtn">📋 Копировать</button>
+                    </div>
+                `;
+                
+                document.getElementById('copyImprovedBtn').onclick = async () => {
+                    await navigator.clipboard.writeText(improvedPrompt);
+                    const btn = document.getElementById('copyImprovedBtn');
+                    btn.textContent = '✅ Скопировано!';
+                    setTimeout(() => { btn.textContent = '📋 Копировать'; }, 1500);
+                };
+            };
+        }
+        
+        function generateImprovedPrompt(prompt, values) {
+            let result = prompt.prompt;
+            
+            if (values.style) result = `${result}. Style: ${values.style}`;
+            if (values.tone) result = `${result}. Tone: ${values.tone}`;
+            if (values.aspect) result = `${result} --ar ${values.aspect}`;
+            if (values.purpose) result = `${result}. For: ${values.purpose}`;
+            if (values.type) result = `${result}. Type: ${values.type}`;
+            if (values.platform) result = `${result}. Platform: ${values.platform}`;
+            if (values.target) result = `${result}. Target audience: ${values.target}`;
+            if (values.complexity) result = `${result}. Complexity: ${values.complexity}`;
+            if (values.mood) result = `${result}. Mood: ${values.mood}`;
+            if (values.language && values.language !== 'другой') result = `${result}. Language: ${values.language}`;
+            
+            if (values.detail) {
+                const detailLevels = {
+                    1: 'minimal detail',
+                    2: 'medium detail',
+                    3: 'above average detail',
+                    4: 'high detail',
+                    5: 'maximum detail'
+                };
+                result = `${result}, ${detailLevels[values.detail] || 'detailed'}`;
+            }
+            if (values.context) result = `${result}. Additional context: ${values.context}`;
+            if (values.length === 'кратко') result = `${result}. Keep it concise.`;
+            if (values.length === 'развёрнуто') result = `${result}. Provide detailed explanation.`;
+            
+            return result;
+        }
+        
+        // ========== МОДАЛЬНОЕ ОКНО ==========
+        function openModal(prompt) {
+            const existingModal = document.querySelector('.modal');
+            if (existingModal) existingModal.remove();
+            
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <span class="close-modal">&times;</span>
+                    <h3>📌 ${escapeHtml(prompt.title)}</h3>
+                    <div class="prompt-category" style="margin-bottom: 1rem;">${getCategoryIcon(prompt.category)} ${getCategoryName(prompt.category)}</div>
+                    ${prompt.image_url ? `<img src="${escapeHtml(prompt.image_url)}" alt="${escapeHtml(prompt.title)}" style="width: 100%; border-radius: 20px; margin-bottom: 1rem; max-height: 250px; object-fit: cover;">` : ''}
+                    <p><strong>Описание:</strong> ${escapeHtml(prompt.description || 'Нет описания')}</p>
+                    <div class="modal-full-prompt">${escapeHtml(prompt.prompt)}</div>
+                    <div class="modal-buttons">
+                        <button class="modal-copy" data-prompt="${escapeHtml(prompt.prompt)}" data-id="${prompt.id}" data-copies="${prompt.copies || 0}">📋 Копировать</button>
+                        <button class="modal-improve" data-prompt='${JSON.stringify(prompt)}'>✨ Улучшить</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            modal.querySelector('.close-modal').onclick = () => modal.remove();
+            modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+            
+            const copyBtn = modal.querySelector('.modal-copy');
+            copyBtn.onclick = async () => {
+                const text = copyBtn.getAttribute('data-prompt');
+                const id = parseInt(copyBtn.getAttribute('data-id'));
+                const copies = parseInt(copyBtn.getAttribute('data-copies')) || 0;
+                await handleCopy(text, id, copies, copyBtn);
+                const original = copyBtn.innerHTML;
+                copyBtn.innerHTML = '✅ Скопировано!';
+                setTimeout(() => { copyBtn.innerHTML = original; }, 1500);
+            };
+            
+            const improveBtn = modal.querySelector('.modal-improve');
+            improveBtn.onclick = () => {
+                const promptData = JSON.parse(improveBtn.getAttribute('data-prompt'));
+                modal.remove();
+                openImprovePopup(promptData);
+            };
+        }
+        
+        // ========== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==========
+        function getCategoryIcon(cat) {
+            const icons = {
+                photo: "📷", chatgpt: "💬", business: "💼", creative: "✨",
+                code: "💻", excel: "📊", video: "🎬", music: "🎵",
+                design: "🎨", social: "📱"
+            };
+            return icons[cat] || "📌";
+        }
+        
+        function getCategoryName(cat) {
+            const names = {
+                photo: "Фото / Изображения", chatgpt: "ChatGPT / Текст", business: "Бизнес / Маркетинг / SEO",
+                creative: "Креатив", code: "Код", excel: "Excel", video: "Видео", music: "Музыка",
+                design: "Дизайн", social: "Соцсети"
+            };
+            return names[cat] || cat;
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // ========== СОРТИРОВКА ==========
+        const sortBtn = document.getElementById('sortByCopiesBtn');
+        if (sortBtn) {
+            sortBtn.addEventListener('click', () => {
+                if (sortMode === 'default') {
+                    sortMode = 'popular';
+                    sortBtn.innerHTML = '📊 По популярности ↑';
+                    sortBtn.classList.add('active');
+                } else {
+                    sortMode = 'default';
+                    sortBtn.innerHTML = '📊 По популярности ↓';
+                    sortBtn.classList.remove('active');
+                }
+                renderPrompts(currentCategory);
+            });
+        }
+        
+        // ========== ЗАПУСК ==========
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadPromptsFromSupabase();
+            
+            const categoryBtns = document.querySelectorAll('.category-btn');
+            categoryBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    categoryBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentCategory = btn.dataset.category;
+                    renderPrompts(currentCategory);
+                });
+            });
+        });
+
+        const shapes = document.querySelectorAll('.shape');
+let mouseX = 0, mouseY = 0, targetX = 0, targetY = 0;
+const ease = 0.08;
+document.addEventListener('mousemove', (e) => {
+    targetX = (e.clientX / window.innerWidth - 0.5) * 2;
+    targetY = (e.clientY / window.innerHeight - 0.5) * 2;
+});
+function animateShapes() {
+    mouseX += (targetX - mouseX) * ease;
+    mouseY += (targetY - mouseY) * ease;
+    shapes.forEach(shape => {
+        const depth = parseFloat(shape.getAttribute('data-depth') || 0.5);
+        const moveX = mouseX * 60 * depth;
+        const moveY = mouseY * 60 * depth;
+        const rotateY = mouseX * 20 * depth;
+        const rotateX = mouseY * 20 * depth;
+        const scale = 1 + Math.abs(mouseX * mouseY) * 0.15 * depth;
+        shape.style.transform = `translate(${moveX}px, ${moveY}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(${scale})`;
+    });
+    requestAnimationFrame(animateShapes);
+}
+animateShapes();
+document.addEventListener('mouseleave', () => { targetX = 0; targetY = 0; });
+    </script>
+</body>
+</html>
