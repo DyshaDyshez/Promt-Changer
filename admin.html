@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель | Промт-мастер</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        :root {
+            --bg-gradient-start: #f0f4ff;
+            --bg-gradient-end: #d9e2f0;
+            --panel-bg: rgba(255, 255, 255, 0.7);
+            --panel-border: rgba(0, 0, 0, 0.1);
+            --text-primary: #1a1f2e;
+            --text-secondary: #2d3748;
+            --text-muted: #4a5568;
+            --accent: #4f6af5;
+            --accent-dark: #3b4fd0;
+            --input-bg: rgba(255, 255, 255, 0.9);
+            --input-border: #cbd5e0;
+            --success: #38a169;
+            --danger: #e53e3e;
+            --warning: #ed8936;
+        }
+        
+        [data-theme="dark"] {
+            --bg-gradient-start: #1a1f2e;
+            --bg-gradient-end: #0b0d17;
+            --panel-bg: rgba(20, 25, 40, 0.7);
+            --panel-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #eef2ff;
+            --text-secondary: #cbd5ff;
+            --text-muted: #9aa4c8;
+            --accent: #4f6af5;
+            --accent-dark: #6d85f9;
+            --input-bg: rgba(12, 16, 28, 0.7);
+            --input-border: #2f3750;
+            --success: #48bb78;
+            --danger: #fc8181;
+            --warning: #f6ad55;
+        }
+        
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at 10% 20%, var(--bg-gradient-start), var(--bg-gradient-end));
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            transition: background 0.3s;
+        }
+        
+        .login-container, .admin-container {
+            width: 100%;
+            max-width: 1400px;
+            background: var(--panel-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--panel-border);
+            border-radius: 32px;
+            padding: 2rem;
+            box-shadow: 0 30px 50px -20px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s;
+        }
+        
+        .login-box {
+            max-width: 400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .login-box h2 {
+            margin-bottom: 1.5rem;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+            border-radius: 40px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(79, 106, 245, 0.2);
+        }
+        
+        button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        button:hover {
+            transform: scale(1.02);
+            filter: brightness(1.1);
+        }
+        
+        .error-msg {
+            color: var(--danger);
+            margin-top: 1rem;
+        }
+        
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: var(--input-bg);
+            border-radius: 24px;
+            padding: 1.2rem;
+            text-align: center;
+            transition: all 0.2s;
+            border: 1px solid var(--input-border);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
+        }
+        
+        /* Фильтры */
+        .filters-bar {
+            background: var(--input-bg);
+            border-radius: 24px;
+            padding: 1.2rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: flex-end;
+            border: 1px solid var(--input-border);
+        }
+        
+        .filter-group {
+            flex: 1;
+            min-width: 180px;
+        }
+        
+        .filter-group label {
+            display: block;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.3rem;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+        
+        .filter-group input,
+        .filter-group select {
+            margin-bottom: 0;
+            padding: 0.6rem 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .sort-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .sort-btn {
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-secondary);
+            padding: 0.6rem 1rem;
+            font-size: 0.8rem;
+            margin: 0;
+        }
+        
+        .sort-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        
+        .reset-filters-btn {
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-secondary);
+            padding: 0.6rem 1rem;
+        }
+        
+        .reset-filters-btn:hover {
+            background: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+        
+        .prompts-table {
+            overflow-x: auto;
+            margin-top: 1rem;
+            border-radius: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid var(--input-border);
+        }
+        
+        th {
+            color: var(--accent);
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+            transition: 0.2s;
+        }
+        
+        th:hover {
+            background: var(--input-bg);
+        }
+        
+        tr:hover {
+            background: var(--input-bg);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .edit-btn, .delete-btn, .duplicate-btn {
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 20px;
+            padding: 0.3rem 0.8rem;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: 0.2s;
+        }
+        
+        .edit-btn:hover { background: var(--accent); color: white; }
+        .delete-btn:hover { background: var(--danger); color: white; }
+        .duplicate-btn:hover { background: var(--success); color: white; }
+        
+        /* Индикатор картинки */
+        .image-indicator {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        
+        .image-indicator.has-image {
+            background: var(--success);
+            color: white;
+        }
+        
+        .image-indicator.no-image {
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-muted);
+        }
+        
+        .image-indicator:hover {
+            transform: scale(1.1);
+        }
+        
+        /* Модальное окно */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+        
+        .modal-content {
+            background: var(--panel-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 32px;
+            padding: 2rem;
+            max-width: 550px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            border: 1px solid var(--accent);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3);
+        }
+        
+        .modal-content h3 {
+            margin-bottom: 1.2rem;
+            color: var(--accent);
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--accent);
+            color: white;
+            padding: 0.8rem 1.2rem;
+            border-radius: 40px;
+            z-index: 1100;
+            animation: slideInToast 0.3s ease;
+        }
+        
+        @keyframes slideInToast {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .theme-toggle {
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 40px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+        }
+        
+        .add-btn {
+            margin-bottom: 0;
+            background: var(--accent);
+        }
+        
+        .badge {
+            background: var(--accent);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .quick-stats {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .stat-chip {
+            background: var(--input-bg);
+            border-radius: 30px;
+            padding: 0.3rem 0.8rem;
+            font-size: 0.7rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            border: 1px solid var(--input-border);
+        }
+        
+        /* Стили для тегов */
+        .tags-section {
+            margin-bottom: 1rem;
+        }
+        
+        .tags-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        .tags-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.8rem;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+        
+        .tag-option {
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 30px;
+            padding: 0.4rem 1rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: 0.2s;
+            color: var(--text-secondary);
+        }
+        
+        .tag-option:hover {
+            background: var(--accent);
+            color: white;
+            transform: translateY(-1px);
+        }
+        
+        .tag-option.selected {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        
+        .selected-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: var(--input-bg);
+            border-radius: 20px;
+            min-height: 50px;
+        }
+        
+        .selected-tag {
+            background: var(--accent);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        
+        .remove-tag {
+            cursor: pointer;
+            font-weight: bold;
+            opacity: 0.8;
+        }
+        
+        .remove-tag:hover {
+            opacity: 1;
+        }
+        
+        @media (max-width: 700px) {
+            .admin-container, .login-container {
+                padding: 1rem;
+            }
+            th, td {
+                padding: 0.5rem;
+                font-size: 0.75rem;
+            }
+            .filters-bar {
+                flex-direction: column;
+            }
+            .filter-group {
+                width: 100%;
+            }
+            .sort-actions {
+                width: 100%;
+                justify-content: center;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .image-indicator {
+                width: 24px;
+                height: 24px;
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+
+    <script>
+        // ========== НАСТРОЙКИ ==========
+        const SUPABASE_URL = 'https://ligmsihssbvolgdogaqm.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_gC9UkfH2xkJGqGlnIgd-YA_7Ksa09Xb';
+        const supabaseClient = supabase ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+        
+        // ========== КАТЕГОРИИ ==========
+        const CATEGORIES = [
+            { id: 'photo', name: '📷 Фото / Изображения', icon: '📷' },
+            { id: 'chatgpt', name: '💬 ChatGPT / Текст', icon: '💬' },
+            { id: 'business', name: '💼 Бизнес / Маркетинг / SEO', icon: '💼' },
+            { id: 'creative', name: '✨ Креатив', icon: '✨' },
+            { id: 'code', name: '💻 Код / Программирование', icon: '💻' },
+            { id: 'excel', name: '📊 Excel / Таблицы', icon: '📊' },
+            { id: 'video', name: '🎬 Видео / Анимация', icon: '🎬' },
+            { id: 'music', name: '🎵 Музыка / Аудио', icon: '🎵' },
+            { id: 'design', name: '🎨 Дизайн / UI/UX', icon: '🎨' },
+            { id: 'social', name: '📱 Соцсети / SMM', icon: '📱' }
+        ];
+        
+        // ========== ПРЕДЛОЖЕННЫЕ ТЕГИ ==========
+        const SUGGESTED_TAGS = [
+            'портрет', 'пейзаж', 'логотип', 'пост', 'статья', 'письмо',
+            'продажи', 'реклама', 'seo', 'контент', 'видео', 'сценарий',
+            'код', 'react', 'python', 'sql', 'excel', 'формула',
+            'фото', 'обработка', 'ретушь', 'нейросеть', 'chatgpt',
+            'бизнес', 'креатив', 'дизайн', 'интерьер', 'соцсети', 'instagram'
+        ];
+        
+        // ========== ТЕМА ==========
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            } else {
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+            }
+        }
+        initTheme();
+        
+        // ========== СОСТОЯНИЕ ==========
+        let allPrompts = [];
+        let filteredPrompts = [];
+        let editingPrompt = null;
+        
+        let filters = {
+            search: '',
+            category: 'all'
+        };
+        
+        let sortField = 'id';
+        let sortDirection = 'desc';
+        
+        // ========== ВСПОМОГАТЕЛЬНЫЕ ==========
+        function showToast(msg, isError = false) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = msg;
+            toast.style.background = isError ? '#e53e3e' : '#4f6af5';
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // ========== АВТОРИЗАЦИЯ ==========
+        async function checkAuth() {
+            const isLoggedIn = localStorage.getItem('admin_logged_in');
+            const loginTime = localStorage.getItem('admin_login_time');
+            if (isLoggedIn === 'true' && loginTime) {
+                const hoursPassed = (Date.now() - parseInt(loginTime)) / (1000 * 60 * 60);
+                if (hoursPassed < 24) return true;
+            }
+            return false;
+        }
+        
+        async function login(password) {
+            try {
+                const { data, error } = await supabaseClient.rpc('check_admin_password', {
+                    input_password: password
+                });
+                if (error) throw error;
+                if (data === true) {
+                    localStorage.setItem('admin_logged_in', 'true');
+                    localStorage.setItem('admin_login_time', Date.now().toString());
+                    showToast('✅ Вход выполнен!');
+                    return true;
+                } else {
+                    showToast('❌ Неверный пароль', true);
+                    return false;
+                }
+            } catch (error) {
+                console.error('Ошибка входа:', error);
+                showToast('❌ Ошибка подключения к Supabase', true);
+                return false;
+            }
+        }
+        
+        function logout() {
+            localStorage.removeItem('admin_logged_in');
+            localStorage.removeItem('admin_login_time');
+            showToast('👋 Выход выполнен');
+            renderLoginPage();
+        }
+        
+        // ========== ЗАГРУЗКА И ФИЛЬТРАЦИЯ ==========
+        async function loadPrompts() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('prompts')
+                    .select('*')
+                    .order('id', { ascending: false });
+                if (error) throw error;
+                allPrompts = data || [];
+                applyFiltersAndSort();
+                return allPrompts;
+            } catch (error) {
+                console.error('Ошибка загрузки:', error);
+                showToast('❌ Ошибка загрузки промтов', true);
+                return [];
+            }
+        }
+        
+        function applyFiltersAndSort() {
+            let result = [...allPrompts];
+            
+            if (filters.search.trim()) {
+                const searchTerm = filters.search.toLowerCase();
+                result = result.filter(p => 
+                    p.title.toLowerCase().includes(searchTerm) ||
+                    (p.description && p.description.toLowerCase().includes(searchTerm)) ||
+                    p.prompt.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            if (filters.category !== 'all') {
+                result = result.filter(p => p.category === filters.category);
+            }
+            
+            result.sort((a, b) => {
+                let aVal = a[sortField];
+                let bVal = b[sortField];
+                
+                if (sortField === 'copies') {
+                    aVal = aVal || 0;
+                    bVal = bVal || 0;
+                }
+                
+                if (sortDirection === 'asc') {
+                    return aVal > bVal ? 1 : -1;
+                } else {
+                    return aVal < bVal ? 1 : -1;
+                }
+            });
+            
+            filteredPrompts = result;
+            renderAdminPanel();
+        }
+        
+        function resetFilters() {
+            filters = { search: '', category: 'all' };
+            sortField = 'id';
+            sortDirection = 'desc';
+            applyFiltersAndSort();
+        }
+        
+        function updateFilters() {
+            const searchInput = document.getElementById('searchInput');
+            const categorySelect = document.getElementById('categoryFilter');
+            if (searchInput) filters.search = searchInput.value;
+            if (categorySelect) filters.category = categorySelect.value;
+            applyFiltersAndSort();
+        }
+        
+        async function getStats() {
+            const totalCopies = allPrompts.reduce((sum, p) => sum + (p.copies || 0), 0);
+            const topPrompts = [...allPrompts].sort((a, b) => (b.copies || 0) - (a.copies || 0)).slice(0, 3);
+            const withImages = allPrompts.filter(p => p.image_url && p.image_url.trim()).length;
+            return {
+                total: allPrompts.length,
+                totalCopies: totalCopies,
+                avgCopies: allPrompts.length ? (totalCopies / allPrompts.length).toFixed(1) : 0,
+                filteredCount: filteredPrompts.length,
+                topPrompts: topPrompts,
+                zeroCopyCount: allPrompts.filter(p => (p.copies || 0) === 0).length,
+                withImages: withImages,
+                withoutImages: allPrompts.length - withImages
+            };
+        }
+        
+        // ========== CRUD ==========
+        async function savePrompt(promptData, isEdit = false) {
+            try {
+                let result;
+                if (isEdit && editingPrompt) {
+                    result = await supabaseClient
+                        .from('prompts')
+                        .update({
+                            title: promptData.title,
+                            category: promptData.category,
+                            prompt: promptData.prompt,
+                            description: promptData.description,
+                            tags: promptData.tags,
+                            image_url: promptData.image_url
+                        })
+                        .eq('id', editingPrompt.id);
+                } else {
+                    result = await supabaseClient
+                        .from('prompts')
+                        .insert([{
+                            title: promptData.title,
+                            category: promptData.category,
+                            prompt: promptData.prompt,
+                            description: promptData.description,
+                            tags: promptData.tags,
+                            image_url: promptData.image_url,
+                            copies: 0
+                        }]);
+                }
+                if (result.error) throw result.error;
+                showToast(isEdit ? '✅ Промт обновлён!' : '✅ Промт добавлен!');
+                closeModal();
+                await loadPrompts();
+            } catch (error) {
+                console.error('Ошибка сохранения:', error);
+                showToast('❌ Ошибка сохранения', true);
+            }
+        }
+        
+        async function deletePrompt(id) {
+            if (!confirm('Удалить этот промт?')) return;
+            try {
+                const { error } = await supabaseClient.from('prompts').delete().eq('id', id);
+                if (error) throw error;
+                showToast('🗑️ Промт удалён');
+                await loadPrompts();
+            } catch (error) {
+                console.error('Ошибка удаления:', error);
+                showToast('❌ Ошибка удаления', true);
+            }
+        }
+        
+        async function duplicatePrompt(prompt) {
+            try {
+                const { error } = await supabaseClient.from('prompts').insert([{
+                    title: `${prompt.title} (копия)`,
+                    category: prompt.category,
+                    prompt: prompt.prompt,
+                    description: prompt.description,
+                    tags: prompt.tags,
+                    image_url: prompt.image_url,
+                    copies: 0
+                }]);
+                if (error) throw error;
+                showToast('📋 Промт скопирован!');
+                await loadPrompts();
+            } catch (error) {
+                console.error('Ошибка копирования:', error);
+                showToast('❌ Ошибка копирования', true);
+            }
+        }
+        
+        // ========== РЕНДЕРИНГ ==========
+        function renderLoginPage() {
+            const app = document.getElementById('app');
+            app.innerHTML = `
+                <div class="login-container">
+                    <div class="login-box">
+                        <h2>🔐 Админ-панель</h2>
+                        <input type="password" id="adminPassword" placeholder="Введите пароль">
+                        <button id="loginBtn">Войти</button>
+                        <div id="loginError" class="error-msg"></div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('loginBtn').onclick = async () => {
+                const pwd = document.getElementById('adminPassword').value;
+                const ok = await login(pwd);
+                if (ok) await loadPrompts();
+            };
+            document.getElementById('adminPassword').onkeypress = (e) => {
+                if (e.key === 'Enter') document.getElementById('loginBtn').click();
+            };
+        }
+        
+        async function renderAdminPanel() {
+            const stats = await getStats();
+            const app = document.getElementById('app');
+            
+            app.innerHTML = `
+                <div class="admin-container">
+                    <div class="admin-header">
+                        <h2>⚡ Админ-панель Промт-мастер</h2>
+                        <div class="quick-stats">
+                            <span class="stat-chip">📊 ${stats.total} промтов</span>
+                            <span class="stat-chip">📋 ${stats.totalCopies} копирований</span>
+                            <span class="stat-chip">⭐ ${stats.avgCopies} среднее</span>
+                            <span class="stat-chip">🆕 ${stats.zeroCopyCount} без копий</span>
+                            <span class="stat-chip">🖼️ ${stats.withImages} с картинками</span>
+                            <span class="stat-chip">❌ ${stats.withoutImages} без картинок</span>
+                        </div>
+                        <button id="logoutBtn" class="theme-toggle">🚪 Выйти</button>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.total}</div>
+                            <div class="stat-label">Всего промтов</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.filteredCount}</div>
+                            <div class="stat-label">Показано</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.totalCopies}</div>
+                            <div class="stat-label">Всего копирований</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.avgCopies}</div>
+                            <div class="stat-label">Среднее копирований</div>
+                        </div>
+                    </div>
+                    
+                    <div class="filters-bar">
+                        <div class="filter-group">
+                            <label>🔍 Поиск по названию</label>
+                            <input type="text" id="searchInput" placeholder="Название, описание или промт..." value="${escapeHtml(filters.search)}">
+                        </div>
+                        <div class="filter-group">
+                            <label>📂 Категория</label>
+                            <select id="categoryFilter">
+                                <option value="all">Все категории</option>
+                                ${CATEGORIES.map(cat => `
+                                    <option value="${cat.id}" ${filters.category === cat.id ? 'selected' : ''}>${cat.name}</option>
+                                `).join('')}
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>📊 Сортировка</label>
+                            <div class="sort-actions">
+                                <button class="sort-btn ${sortField === 'id' ? 'active' : ''}" data-field="id">По ID</button>
+                                <button class="sort-btn ${sortField === 'title' ? 'active' : ''}" data-field="title">По названию</button>
+                                <button class="sort-btn ${sortField === 'copies' ? 'active' : ''}" data-field="copies">По популярности</button>
+                                <button class="sort-btn" id="sortDirBtn">${sortDirection === 'desc' ? '↓ По убыванию' : '↑ По возрастанию'}</button>
+                                <button id="resetFiltersBtn" class="reset-filters-btn">🔄 Сбросить</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+                        <button id="addBtn" class="add-btn">+ Добавить новый промт</button>
+                        <div class="quick-stats">
+                            ${stats.topPrompts.length > 0 ? `
+                                <span class="stat-chip">🏆 Топ: ${stats.topPrompts.map(p => p.title).join(', ')}</span>
+                            ` : ''}
+                        </div>
+                    </div>
+                    
+                    <div class="prompts-table">
+                        ${filteredPrompts.length === 0 ? '<p style="text-align:center; padding:2rem;">📭 Нет промтов по заданным фильтрам</p>' : `
+                             <table>
+                                <thead>
+                                    <tr>
+                                        <th data-sort="id">ID ${sortField === 'id' ? (sortDirection === 'desc' ? '↓' : '↑') : ''}</th>
+                                        <th data-sort="title">Название ${sortField === 'title' ? (sortDirection === 'desc' ? '↓' : '↑') : ''}</th>
+                                        <th>Категория</th>
+                                        <th>🖼️ Картинка</th>
+                                        <th>Промт</th>
+                                        <th data-sort="copies">Копий ${sortField === 'copies' ? (sortDirection === 'desc' ? '↓' : '↑') : ''}</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${filteredPrompts.map(p => {
+                                        const hasImage = p.image_url && p.image_url.trim();
+                                        return `
+                                        <tr>
+                                            <td>${p.id}</td>
+                                            <td><strong>${escapeHtml(p.title)}</strong></td>
+                                            <td>${getCategoryIcon(p.category)} ${p.category}</td>
+                                            <td style="text-align: center;">
+                                                <div class="image-indicator ${hasImage ? 'has-image' : 'no-image'}" 
+                                                     title="${hasImage ? escapeHtml(p.image_url) : 'Нет картинки'}">
+                                                    ${hasImage ? '🖼️' : '❌'}
+                                                </div>
+                                            </td>
+                                            <td style="max-width:250px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${escapeHtml(p.prompt)}">${escapeHtml(p.prompt.substring(0, 60))}...</td>
+                                            <td>${p.copies || 0}</td>
+                                            <td class="action-buttons">
+                                                <button class="edit-btn" data-id="${p.id}">✏️</button>
+                                                <button class="duplicate-btn" data-id="${p.id}">📋</button>
+                                                <button class="delete-btn" data-id="${p.id}">🗑️</button>
+                                            </td>
+                                        </tr>
+                                    `}).join('')}
+                                </tbody>
+                            </table>
+                        `}
+                    </div>
+                </div>
+            `;
+            
+            // Обработчики
+            document.getElementById('logoutBtn').onclick = logout;
+            document.getElementById('addBtn').onclick = () => openModal();
+            
+            const searchInput = document.getElementById('searchInput');
+            const categorySelect = document.getElementById('categoryFilter');
+            
+            searchInput.oninput = () => updateFilters();
+            categorySelect.onchange = () => updateFilters();
+            
+            document.getElementById('resetFiltersBtn').onclick = () => {
+                resetFilters();
+                if (searchInput) searchInput.value = '';
+                if (categorySelect) categorySelect.value = 'all';
+            };
+            
+            document.querySelectorAll('th[data-sort]').forEach(th => {
+                th.onclick = () => {
+                    const field = th.dataset.sort;
+                    if (sortField === field) {
+                        sortDirection = sortDirection === 'desc' ? 'asc' : 'desc';
+                    } else {
+                        sortField = field;
+                        sortDirection = 'desc';
+                    }
+                    applyFiltersAndSort();
+                };
+            });
+            
+            document.getElementById('sortDirBtn').onclick = () => {
+                sortDirection = sortDirection === 'desc' ? 'asc' : 'desc';
+                applyFiltersAndSort();
+            };
+            
+            document.querySelectorAll('.sort-btn[data-field]').forEach(btn => {
+                btn.onclick = () => {
+                    sortField = btn.dataset.field;
+                    sortDirection = 'desc';
+                    applyFiltersAndSort();
+                };
+            });
+            
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.onclick = () => {
+                    const id = parseInt(btn.dataset.id);
+                    const prompt = allPrompts.find(p => p.id === id);
+                    if (prompt) openModal(prompt);
+                };
+            });
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.onclick = () => deletePrompt(parseInt(btn.dataset.id));
+            });
+            document.querySelectorAll('.duplicate-btn').forEach(btn => {
+                btn.onclick = () => {
+                    const id = parseInt(btn.dataset.id);
+                    const prompt = allPrompts.find(p => p.id === id);
+                    if (prompt) duplicatePrompt(prompt);
+                };
+            });
+        }
+        
+        function getCategoryIcon(categoryId) {
+            const cat = CATEGORIES.find(c => c.id === categoryId);
+            return cat ? cat.icon : '📌';
+        }
+        
+        function openModal(prompt = null) {
+            editingPrompt = prompt;
+            const currentTags = prompt?.tags || [];
+            
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <h3>${prompt ? '✏️ Редактировать промт' : '➕ Новый промт'}</h3>
+                    
+                    <input type="text" id="promptTitle" placeholder="Название промта" value="${escapeHtml(prompt?.title || '')}">
+                    
+                    <select id="promptCategory">
+                        ${CATEGORIES.map(cat => `
+                            <option value="${cat.id}" ${prompt?.category === cat.id ? 'selected' : ''}>${cat.name}</option>
+                        `).join('')}
+                    </select>
+                    
+                    <textarea id="promptDescription" rows="2" placeholder="Краткое описание">${escapeHtml(prompt?.description || '')}</textarea>
+                    
+                    <textarea id="promptText" rows="4" placeholder="Текст промта (обязательно)">${escapeHtml(prompt?.prompt || '')}</textarea>
+                    
+                    <div class="tags-section">
+                        <div class="tags-label">🏷️ Выберите теги (нажмите на кнопку):</div>
+                        <div class="tags-buttons" id="tagsButtons"></div>
+                        <div class="tags-label">✅ Выбранные теги:</div>
+                        <div class="selected-tags" id="selectedTags"></div>
+                    </div>
+                    
+                    <input type="text" id="promptImage" placeholder="Ссылка на картинку (необязательно)" value="${escapeHtml(prompt?.image_url || '')}">
+                    
+                    <div class="modal-buttons">
+                        <button id="saveBtn">💾 Сохранить</button>
+                        <button id="cancelBtn">Отмена</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            let selectedTags = [...currentTags];
+            
+            function renderTagsButtons() {
+                const container = document.getElementById('tagsButtons');
+                if (!container) return;
+                container.innerHTML = SUGGESTED_TAGS.map(tag => `
+                    <div class="tag-option ${selectedTags.includes(tag) ? 'selected' : ''}" data-tag="${escapeHtml(tag)}">
+                        #${escapeHtml(tag)}
+                    </div>
+                `).join('');
+                
+                document.querySelectorAll('.tag-option').forEach(btn => {
+                    btn.onclick = () => {
+                        const tag = btn.dataset.tag;
+                        if (selectedTags.includes(tag)) {
+                            selectedTags = selectedTags.filter(t => t !== tag);
+                        } else {
+                            selectedTags.push(tag);
+                        }
+                        renderTagsButtons();
+                        renderSelectedTags();
+                    };
+                });
+            }
+            
+            function renderSelectedTags() {
+                const container = document.getElementById('selectedTags');
+                if (!container) return;
+                if (selectedTags.length === 0) {
+                    container.innerHTML = '<span style="color: var(--text-muted); font-size: 0.75rem;">Нет выбранных тегов</span>';
+                    return;
+                }
+                container.innerHTML = selectedTags.map(tag => `
+                    <span class="selected-tag">
+                        #${escapeHtml(tag)}
+                        <span class="remove-tag" data-tag="${escapeHtml(tag)}">×</span>
+                    </span>
+                `).join('');
+                
+                document.querySelectorAll('.remove-tag').forEach(btn => {
+                    btn.onclick = () => {
+                        const tag = btn.dataset.tag;
+                        selectedTags = selectedTags.filter(t => t !== tag);
+                        renderTagsButtons();
+                        renderSelectedTags();
+                    };
+                });
+            }
+            
+            renderTagsButtons();
+            renderSelectedTags();
+            
+            document.getElementById('saveBtn').onclick = async () => {
+                const title = document.getElementById('promptTitle').value.trim();
+                const promptText = document.getElementById('promptText').value.trim();
+                if (!title) {
+                    showToast('❌ Введите название', true);
+                    return;
+                }
+                if (!promptText) {
+                    showToast('❌ Введите текст промта', true);
+                    return;
+                }
+                await savePrompt({
+                    title: title,
+                    category: document.getElementById('promptCategory').value,
+                    description: document.getElementById('promptDescription').value.trim(),
+                    prompt: promptText,
+                    tags: selectedTags,
+                    image_url: document.getElementById('promptImage').value.trim() || null
+                }, !!prompt);
+            };
+            
+            document.getElementById('cancelBtn').onclick = closeModal;
+            modal.onclick = (e) => { if (e.target === modal) closeModal(); };
+        }
+        
+        function closeModal() {
+            const modal = document.querySelector('.modal');
+            if (modal) modal.remove();
+            editingPrompt = null;
+        }
+        
+        // ========== ЗАПУСК ==========
+        window.addEventListener('DOMContentLoaded', async function() {
+            if (!supabaseClient) {
+                document.getElementById('app').innerHTML = '<div class="login-container"><div class="login-box"><h2>❌ Ошибка</h2><p>Не удалось подключиться к Supabase</p></div></div>';
+                return;
+            }
+            
+            const isLoggedIn = await checkAuth();
+            if (isLoggedIn) {
+                await loadPrompts();
+            } else {
+                renderLoginPage();
+            }
+        });
+    </script>
+</body>
+</html>
