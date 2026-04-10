@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Sales Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-white min-h-screen flex items-center justify-center p-4">
+
+    <div class="max-w-md w-full bg-slate-800 rounded-2xl shadow-2xl p-6 border border-slate-700">
+        <h1 class="text-2xl font-bold mb-2 text-blue-400">AI Помощник по продажам</h1>
+        <p class="text-slate-400 text-sm mb-6">Введи возражение родителя, чтобы получить стратегию отработки.</p>
+
+        <div class="space-y-4">
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Возражение клиента</label>
+                <textarea id="objectionInput" rows="3" 
+                    class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                    placeholder="Например: 'Это слишком дорого для групповых занятий...'"></textarea>
+            </div>
+
+            <button onclick="getAdvice()" id="submitBtn"
+                class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg transition-colors flex items-center justify-center">
+                <span>Получить рекомендации</span>
+            </button>
+
+            <div id="resultBox" class="hidden mt-6 space-y-3">
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Рекомендация ИИ</label>
+                <div id="aiResponse" class="bg-slate-900 border border-blue-900/30 rounded-lg p-4 text-sm leading-relaxed text-slate-300 italic">
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ВСТАВЬ СВОЙ КЛЮЧ ТУТ
+        const API_KEY = 'AIzaSyCfUCOoQECMe2kyd3TtZ072j0zfj9BumG0'; 
+        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+
+        async function getAdvice() {
+            const input = document.getElementById('objectionInput').value;
+            const btn = document.getElementById('submitBtn');
+            const resultBox = document.getElementById('resultBox');
+            const responseDiv = document.getElementById('aiResponse');
+
+            if (!input) return alert('Введите текст возражения');
+
+            // Состояние загрузки
+            btn.disabled = true;
+            btn.innerText = 'Думаю...';
+            resultBox.classList.add('hidden');
+
+            const prompt = `Ты эксперт по продажам образовательных курсов по программированию. 
+            Клиент (родитель ребенка) говорит: "${input}". 
+            Напиши короткий, но мощный ответ, который поможет закрыть это возражение и перевести клиента в статус VIP. 
+            Используй психологические триггеры и не будь слишком навязчивым.`;
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }]
+                    })
+                });
+
+                const data = await response.json();
+                const aiText = data.candidates[0].content.parts[0].text;
+
+                responseDiv.innerText = aiText;
+                resultBox.classList.remove('hidden');
+            } catch (error) {
+                console.error(error);
+                alert('Ошибка! Проверь VPN или API ключ в коде.');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'Получить рекомендации';
+            }
+        }
+    </script>
+</body>
+</html>
