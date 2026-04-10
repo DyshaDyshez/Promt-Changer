@@ -40,51 +40,48 @@
         // ЗАМЕНИ НА СВОЙ URL ИЗ SUPABASE
         const FUNCTION_URL = 'https://ligmsihssbvolgdogaqm.supabase.co/functions/v1/quick-task';
 
-        async function getAdvice() {
-            const input = document.getElementById('objectionInput').value;
-            const btn = document.getElementById('submitBtn');
-            const btnText = document.getElementById('btnText');
-            const resultBox = document.getElementById('resultBox');
-            const responseDiv = document.getElementById('aiResponse');
+       async function getAdvice() {
+    const input = document.getElementById('objectionInput').value;
+    const btnText = document.getElementById('btnText');
+    const responseDiv = document.getElementById('aiResponse');
+    const resultBox = document.getElementById('resultBox');
 
-            if (!input) return alert('Введите текст возражения');
+    if (!input) return alert('Введите текст');
 
-            // Состояние загрузки
-            btn.disabled = true;
-            btnText.innerText = 'Запрос к серверу...';
-            resultBox.classList.add('hidden');
+    btnText.innerText = 'Запрос к серверу...';
 
-            try {
-                const response = await fetch(FUNCTION_URL, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ objection: input })
-                });
+    try {
+        const response = await fetch(FUNCTION_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ objection: input })
+        });
 
-                if (!response.ok) {
-                    throw new Error(`Ошибка сервера: ${response.status}`);
-                }
+        const data = await response.json();
+        console.log("Полный ответ от сервера:", data); // Смотри это в консоли (F12)
 
-                const data = await response.json();
-                
-                // Проверяем структуру ответа от OpenRouter через твою функцию
-                if (data.choices && data.choices[0].message) {
-                    responseDiv.innerText = data.choices[0].message.content;
-                    resultBox.classList.remove('hidden');
-                } else {
-                    throw new Error('Некорректный формат ответа от ИИ');
-                }
-
-            } catch (error) {
-                console.error("Ошибка:", error);
-                alert('Произошла ошибка. Проверь логи Edge Function в Supabase или VPN.');
-            } finally {
-                btn.disabled = false;
-                btnText.innerText = 'Получить совет ИИ';
-            }
+        // Проверяем, нет ли ошибки в самом ответе
+        if (data.error) {
+            throw new Error(`Ошибка OpenRouter: ${data.error.message || JSON.stringify(data.error)}`);
         }
+
+        // Пытаемся достать текст ответа
+        if (data.choices && data.choices[0] && data.choices[0].message) {
+            responseDiv.innerText = data.choices[0].message.content;
+            resultBox.classList.remove('hidden');
+        } else {
+            // Если формат странный, выведем его целиком, чтобы понять что не так
+            responseDiv.innerText = "Странный формат ответа: " + JSON.stringify(data);
+            resultBox.classList.remove('hidden');
+        }
+
+    } catch (error) {
+        console.error("Критическая ошибка:", error);
+        alert("Ошибка: " + error.message);
+    } finally {
+        btnText.innerText = 'Получить совет ИИ';
+    }
+}
     </script>
 </body>
 </html>
