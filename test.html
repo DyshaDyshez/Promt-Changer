@@ -36,7 +36,7 @@
     <script>
         // ВСТАВЬ СВОЙ КЛЮЧ ТУТ
         const API_KEY = 'AIzaSyCfUCOoQECMe2kyd3TtZ072j0zfj9BumG0'; 
-        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+        const API_URL = `https://corsproxy.io/?` + encodeURIComponent(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`);
 
         async function getAdvice() {
             const input = document.getElementById('objectionInput').value;
