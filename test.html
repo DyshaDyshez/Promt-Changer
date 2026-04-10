@@ -3,40 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Sales Assistant</title>
+    <title>AI Sales Assistant | OpenRouter</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-900 text-white min-h-screen flex items-center justify-center p-4">
 
     <div class="max-w-md w-full bg-slate-800 rounded-2xl shadow-2xl p-6 border border-slate-700">
-        <h1 class="text-2xl font-bold mb-2 text-blue-400">AI Помощник по продажам</h1>
-        <p class="text-slate-400 text-sm mb-6">Введи возражение родителя, чтобы получить стратегию отработки.</p>
+        <h1 class="text-2xl font-bold mb-2 text-emerald-400">AI Sales Assistant</h1>
+        <p class="text-slate-400 text-sm mb-6">Отработка возражений через OpenRouter (Gemini Flash)</p>
 
         <div class="space-y-4">
             <div>
-                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Возражение клиента</label>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Возражение родителя</label>
                 <textarea id="objectionInput" rows="3" 
-                    class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                    placeholder="Например: 'Это слишком дорого для групповых занятий...'"></textarea>
+                    class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
+                    placeholder="Например: 'Ребенок еще маленький для нейросетей...'"></textarea>
             </div>
 
             <button onclick="getAdvice()" id="submitBtn"
-                class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg transition-colors flex items-center justify-center">
-                <span>Получить рекомендации</span>
+                class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-lg transition-colors flex items-center justify-center">
+                <span>Получить стратегию</span>
             </button>
 
             <div id="resultBox" class="hidden mt-6 space-y-3">
                 <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Рекомендация ИИ</label>
-                <div id="aiResponse" class="bg-slate-900 border border-blue-900/30 rounded-lg p-4 text-sm leading-relaxed text-slate-300 italic">
+                <div id="aiResponse" class="bg-slate-900 border border-emerald-900/30 rounded-lg p-4 text-sm leading-relaxed text-slate-300 italic whitespace-pre-wrap">
                     </div>
             </div>
         </div>
     </div>
 
     <script>
-        // ВСТАВЬ СВОЙ КЛЮЧ ТУТ
-        const API_KEY = 'AIzaSyCfUCOoQECMe2kyd3TtZ072j0zfj9BumG0'; 
-        const API_URL = `https://corsproxy.io/?` + encodeURIComponent(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`);
+        const API_KEY = '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';
 
         async function getAdvice() {
             const input = document.getElementById('objectionInput').value;
@@ -46,36 +44,49 @@
 
             if (!input) return alert('Введите текст возражения');
 
-            // Состояние загрузки
             btn.disabled = true;
-            btn.innerText = 'Думаю...';
+            btn.innerText = 'Связываюсь с ИИ...';
             resultBox.classList.add('hidden');
 
-            const prompt = `Ты эксперт по продажам образовательных курсов по программированию. 
-            Клиент (родитель ребенка) говорит: "${input}". 
-            Напиши короткий, но мощный ответ, который поможет закрыть это возражение и перевести клиента в статус VIP. 
-            Используй психологические триггеры и не будь слишком навязчивым.`;
-
             try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${API_KEY}`,
+                        "Content-Type": "application/json"
+                    },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: prompt }] }]
+                        "model": "google/gemini-flash-1.5-8b:free",
+                        "messages": [
+                            {
+                                "role": "system",
+                                "content": "Ты эксперт по продажам IT-курсов для детей. Твоя задача — помочь учителю отработать возражение родителя. Пиши кратко, профессионально и убедительно."
+                            },
+                            {
+                                "role": "user",
+                                "content": `Родитель говорит: "${input}". Как мне ему ответить, чтобы закрыть продажу?`
+                            }
+                        ]
                     })
                 });
 
                 const data = await response.json();
-                const aiText = data.candidates[0].content.parts[0].text;
+                
+                // Проверка на наличие ответа
+                if (data.choices && data.choices[0].message) {
+                    responseDiv.innerText = data.choices[0].message.content;
+                    resultBox.classList.remove('hidden');
+                } else {
+                    console.error("Ошибка API:", data);
+                    alert('ИИ не смог ответить. Проверь баланс/лимиты на OpenRouter.');
+                }
 
-                responseDiv.innerText = aiText;
-                resultBox.classList.remove('hidden');
             } catch (error) {
-                console.error(error);
-                alert('Ошибка! Проверь VPN или API ключ в коде.');
+                console.error("Ошибка сети:", error);
+                alert('Произошла ошибка при запросе.');
             } finally {
                 btn.disabled = false;
-                btn.innerText = 'Получить рекомендации';
+                btn.innerText = 'Получить стратегию';
             }
         }
     </script>
